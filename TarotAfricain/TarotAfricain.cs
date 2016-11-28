@@ -1,18 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SbsSW.SwiPlCs;
+using System;
+using System.Diagnostics;
 
 namespace TarotAfricain
 {
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class TarotAfricain : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        public Game1()
+        public TarotAfricain()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -27,8 +30,28 @@ namespace TarotAfricain
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             base.Initialize();
+            if (!PlEngine.IsInitialized)
+            {
+                string[] param = { "-q", "-f", @"C:\Users\Quentin\Documents\Ecole\IA\prolog.pro" };  // suppressing informational and banner messages
+                PlEngine.Initialize(param);
+                PlQuery.PlCall("assert(father(martin, inka))");
+                PlQuery.PlCall("assert(father(uwe, gloria))");
+                PlQuery.PlCall("assert(father(uwe, melanie))");
+                PlQuery.PlCall("assert(father(uwe, ayala))");
+                using (var q = new PlQuery("father(P, C), atomic_list_concat([P,' is_father_of ',C], L)"))
+                {
+                    foreach (PlQueryVariables v in q.SolutionVariables)
+                        Debug.WriteLine(v["L"].ToString());
+
+                    Debug.WriteLine("all children from uwe:");
+                    q.Variables["P"].Unify("uwe");
+                    foreach (PlQueryVariables v in q.SolutionVariables)
+                        Debug.WriteLine(v["C"].ToString());
+                }
+                PlEngine.PlCleanup();
+                Debug.WriteLine("finshed!");
+            }
         }
 
         /// <summary>
