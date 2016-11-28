@@ -1,9 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TarotAfricain.Core;
 using SbsSW.SwiPlCs;
 using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace TarotAfricain
 {
@@ -14,11 +18,20 @@ namespace TarotAfricain
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        public const int WINDOWS_WIDTH = 983;
+        public const int WINDOWS_HEIGHT = 888;
+        Tapis tapis;
+        List<Joueur> joueurs;
+        int nbCartes;
+        int manche;
+        int tour;
 
         public TarotAfricain()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = WINDOWS_WIDTH;
+            graphics.PreferredBackBufferHeight = WINDOWS_HEIGHT;
         }
 
         /// <summary>
@@ -30,28 +43,26 @@ namespace TarotAfricain
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            base.Initialize();
+            // Loading the prolog kbase
             if (!PlEngine.IsInitialized)
             {
-                string[] param = { "-q", "-f", @"C:\Users\Quentin\Documents\Ecole\IA\prolog.pro" };  // suppressing informational and banner messages
-                PlEngine.Initialize(param);
-                PlQuery.PlCall("assert(father(martin, inka))");
-                PlQuery.PlCall("assert(father(uwe, gloria))");
-                PlQuery.PlCall("assert(father(uwe, melanie))");
-                PlQuery.PlCall("assert(father(uwe, ayala))");
-                using (var q = new PlQuery("father(P, C), atomic_list_concat([P,' is_father_of ',C], L)"))
-                {
-                    foreach (PlQueryVariables v in q.SolutionVariables)
-                        Debug.WriteLine(v["L"].ToString());
+                //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
+                string filename = @"..\..\..\..\Prolog\prolog.pro";
+                // Debug only :
+                //FileStream fs = File.Open(filename, FileMode.Open);
 
-                    Debug.WriteLine("all children from uwe:");
-                    q.Variables["P"].Unify("uwe");
-                    foreach (PlQueryVariables v in q.SolutionVariables)
-                        Debug.WriteLine(v["C"].ToString());
-                }
+                String[] param = { "-q", "-f", filename };
+                PlEngine.Initialize(param);
+                PlQuery.PlCall("assert(carte(1, '7 coeur', 0))");
                 PlEngine.PlCleanup();
-                Debug.WriteLine("finshed!");
             }
+
+
+            tapis = new Core.Tapis();
+            joueurs = new List<Joueur>();
+            manche = 0;
+            tour = 0;
+            base.Initialize();
         }
 
         /// <summary>
@@ -62,8 +73,9 @@ namespace TarotAfricain
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
             // TODO: use this.Content to load your game content here
+            tapis.Texture = Content.Load<Texture2D>("tapis");
+            tapis.Position = new Vector2(0, 0);
         }
 
         /// <summary>
@@ -86,7 +98,8 @@ namespace TarotAfricain
                 Exit();
 
             // TODO: Add your update logic here
-
+            graphics.PreferredBackBufferWidth = WINDOWS_WIDTH;
+            graphics.PreferredBackBufferHeight = WINDOWS_HEIGHT;
             base.Update(gameTime);
         }
 
@@ -99,7 +112,9 @@ namespace TarotAfricain
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            tapis.Draw(spriteBatch);
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }

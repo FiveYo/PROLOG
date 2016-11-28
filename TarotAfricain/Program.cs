@@ -2,6 +2,7 @@
 
 namespace TarotAfricain
 {
+#if WINDOWS || LINUX
     /// <summary>
     /// The main class.
     /// </summary>
@@ -17,4 +18,5 @@ namespace TarotAfricain
                 game.Run();
         }
     }
+#endif
 }
