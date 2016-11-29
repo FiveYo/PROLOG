@@ -11,12 +11,25 @@ SI rang = Premier
 -jouer 
 SI rang= Dernier
 -Je regarde MON NbrPliRestant 
+-Je regarde le NbrPliRestant pour TOUS les autres joueurs
 -Je génère une liste (PLayer,NbrPli,CarteJouée,prendPli) pour chaque joueur( Elle va contenir chaque carte qu'un joueur à poser lors du tour en question  et son nombre de pli restant) -> Deviner si il veut prendre le pli ou pas
 On peut donc spéculer sur le futur ( càd en fonction de son NbrPliRestant ) via la variable NbrPliRestant on peut donc anticiper quand il voudra prendre le pli et se placer en fonction de notre but
 -Regarder qui prend le pli à ce moment -> choisir si on le prend ( si on le prend, poser la carte qui sera légèrement plus forte ou pas ?)
 -probas ( en prenant en compte le comptage de carte)
 
 SINON 
-- ON mélange les deux autres cas
+-Je regarde MON NbrPliRestant 
+-Je regarde le NbrPliRestant pour TOUS les autres joueurs
+-En fonction de mon rang, je génère une liste (PLayer,NbrPli,CarteJouée,prendPli) pour chaque joueur( Elle va contenir chaque carte qu'un joueur à poser lors du tour en question  et son nombre de pli restant) -> Deviner si il veut prendre le pli ou pas
+On peut donc spéculer sur le futur ( càd en fonction de son NbrPliRestant ) via la variable NbrPliRestant on peut donc anticiper quand il voudra prendre le pli et se placer en fonction de notre but
+-Regarder qui prend le plu à ce moment -> choisir si on TENTE de le prendre  ---> Regarder le nombre de carte + le Nbrdepli que doivent faire les personnes après moi 
+-probas ( en prenant en compte le comptage de carte)
 
+
+
+
+
+FONCTIONS :
+-Comptage de carte (Pour chaque manche)
+-
 
