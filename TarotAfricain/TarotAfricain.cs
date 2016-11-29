@@ -44,35 +44,38 @@ namespace TarotAfricain
         {
             // TODO: Add your initialization logic here
             // Loading the prolog kbase
-            if (!PlEngine.IsInitialized)
-            {
-                //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
-                string filename = Path.Combine(Content.RootDirectory + @"\Prolog\prolog.pro");
-                // Debug only :
-                // FileStream fs = File.Open(filename, FileMode.Open);
-
-
-
-                String[] param = { "-q", "-f", filename };
-                PlEngine.Initialize(param);
-                using (PlQuery q = new PlQuery("playGame([\"j1\",\"j2\"],3),pointGame(X,Y)."))
-                {
-                    foreach (PlQueryVariables v in q.SolutionVariables)
-                    {
-                        Debug.Write(v["X"].ToString());
-                        Debug.WriteLine(" : " + v["Y"].ToString());
-                    }
-                }
-
-                PlEngine.PlCleanup();
-            }
-
 
             tapis = new Core.Tapis();
             joueurs = new List<Joueur>();
             manche = 0;
             tour = 0;
             base.Initialize();
+
+            if (!PlEngine.IsInitialized)
+            {
+                //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
+                string filename = @"C:\Users\Quentin\Documents\GitHub\FiveYo\TarotAfricain\ConsoleApplication1\prolog.pro";
+                // Console only :
+                // FileStream fs = File.Open(filename, FileMode.Open);
+
+
+
+                String[] param = { "-q", "-f", filename };
+                PlEngine.Initialize(param);
+                //string query = "playGame([\"Quentin\",\"Mathieu\"],4)";
+
+                //PlQuery.PlCall(query);
+
+                PlQuery q = new PlQuery("playGame([\"Quentin\",\"Mathieu\"],4),pointGame(X,Y)");
+
+                foreach (PlQueryVariables v in q.SolutionVariables)
+                {
+                    Console.Write(v["X"].ToString());
+                    Console.WriteLine(" : " + v["Y"].ToString());
+                }
+                PlEngine.PlCleanup();
+            }
+
         }
 
         /// <summary>
