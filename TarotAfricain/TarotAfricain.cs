@@ -47,13 +47,25 @@ namespace TarotAfricain
             if (!PlEngine.IsInitialized)
             {
                 //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
-                string filename = @"..\..\..\..\Prolog\prolog.pro";
+                string filename = Path.Combine(Content.RootDirectory + @"\Prolog\prolog.pro");
                 // Debug only :
-                //FileStream fs = File.Open(filename, FileMode.Open);
+                // FileStream fs = File.Open(filename, FileMode.Open);
+
+
 
                 String[] param = { "-q", "-f", filename };
                 PlEngine.Initialize(param);
-                PlQuery.PlCall("assert(carte(1, '7 coeur', 0))");
+
+                //PlQuery.PlCall("playGame([\"j1\",\"j2\"],3).");
+                //using (PlQuery q = new PlQuery("pointGame(X,Y)."))
+                //{
+                //    foreach (PlQueryVariables v in q.SolutionVariables)
+                //    {
+                //        Debug.Write(v["X"].ToString());
+                //        Debug.WriteLine(" : " + v["Y"].ToString());
+                //    }
+                //}
+
                 PlEngine.PlCleanup();
             }
 

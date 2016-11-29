@@ -57,100 +57,100 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\10_9-carreau.png">
+    <Content Include="Content\Cartes\10_9-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\11_9-pique.png">
+    <Content Include="Content\Cartes\11_9-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\12_9-trefle.png">
+    <Content Include="Content\Cartes\12_9-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\13_10-coeur.png">
+    <Content Include="Content\Cartes\13_10-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\14_10-carreau.png">
+    <Content Include="Content\Cartes\14_10-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\15_10-pique.png">
+    <Content Include="Content\Cartes\15_10-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\16_10-trefle.png">
+    <Content Include="Content\Cartes\16_10-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\17_J-coeur.png">
+    <Content Include="Content\Cartes\17_J-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\18_J-carreau.png">
+    <Content Include="Content\Cartes\18_J-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\19_J-pique.png">
+    <Content Include="Content\Cartes\19_J-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\1_7-coeur.png">
+    <Content Include="Content\Cartes\1_7-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\20_J-trefle.png">
+    <Content Include="Content\Cartes\20_J-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\21_Q-coeur.png">
+    <Content Include="Content\Cartes\21_Q-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\22_Q-carreau.png">
+    <Content Include="Content\Cartes\22_Q-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\23_Q-pique.png">
+    <Content Include="Content\Cartes\23_Q-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\24_Q-trefle.png">
+    <Content Include="Content\Cartes\24_Q-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\25_K-coeur.png">
+    <Content Include="Content\Cartes\25_K-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\26_K-carreau.png">
+    <Content Include="Content\Cartes\26_K-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\27_K-pique.png">
+    <Content Include="Content\Cartes\27_K-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\28_K-trefle.png">
+    <Content Include="Content\Cartes\28_K-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\29_1-coeur.png">
+    <Content Include="Content\Cartes\29_1-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\2_7-carreau.png">
+    <Content Include="Content\Cartes\2_7-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\30_1-carreau.png">
+    <Content Include="Content\Cartes\30_1-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\31_1-pique.png">
+    <Content Include="Content\Cartes\31_1-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\32_1-trefle.png">
+    <Content Include="Content\Cartes\32_1-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\3_7-pique.png">
+    <Content Include="Content\Cartes\3_7-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\4_7-trefle.png">
+    <Content Include="Content\Cartes\4_7-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\5_8-coeur.png">
+    <Content Include="Content\Cartes\5_8-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\6_8-carreau.png">
+    <Content Include="Content\Cartes\6_8-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\7_8-pique.png">
+    <Content Include="Content\Cartes\7_8-pique.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\8_8-trefle.png">
+    <Content Include="Content\Cartes\8_8-trefle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\9_9-coeur.png">
+    <Content Include="Content\Cartes\9_9-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\tapis.png">
@@ -162,7 +162,9 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Prolog\prolog.pro" />
+    <None Include="Content\Prolog\prolog.pro">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
