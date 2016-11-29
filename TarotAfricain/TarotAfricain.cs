@@ -55,16 +55,14 @@ namespace TarotAfricain
 
                 String[] param = { "-q", "-f", filename };
                 PlEngine.Initialize(param);
-
-                //PlQuery.PlCall("playGame([\"j1\",\"j2\"],3).");
-                //using (PlQuery q = new PlQuery("pointGame(X,Y)."))
-                //{
-                //    foreach (PlQueryVariables v in q.SolutionVariables)
-                //    {
-                //        Debug.Write(v["X"].ToString());
-                //        Debug.WriteLine(" : " + v["Y"].ToString());
-                //    }
-                //}
+                using (PlQuery q = new PlQuery("playGame([\"j1\",\"j2\"],3),pointGame(X,Y)."))
+                {
+                    foreach (PlQueryVariables v in q.SolutionVariables)
+                    {
+                        Debug.Write(v["X"].ToString());
+                        Debug.WriteLine(" : " + v["Y"].ToString());
+                    }
+                }
 
                 PlEngine.PlCleanup();
             }

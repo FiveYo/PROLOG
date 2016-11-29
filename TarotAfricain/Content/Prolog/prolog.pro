@@ -3,6 +3,9 @@
 :- dynamic jeuPlayer/2.
 :- dynamic carte/3.
 
+%(player, point)
+:- dynamic pointGame/2.
+
 % le joueur, ce qu'il a joué, le numéro de la manche
 :- dynamic carteJouee/3.
 
@@ -44,45 +47,50 @@ carte(32, "AS trèfle", 0).
 
 jeuCartes(JeuCartes) :- findall(carte(X,Y,Z),carte(X,Y,Z),JeuCartes).
 
+playGame(Players, NbCarte):- initPlayers(Players), playManche(Players, NbCarte),!.
+    
+initPlayers([]):-!.
+initPlayers([H|T]):- assert(player(H)), assert(pointGame(player(H),0)) , initPlayers(T).
+
+playManche(_, 0):-writeln("Jeu terminée"), !.
 playManche(Players, NbCarte):- writeln("Nouvelle manche"),
-   				initPlayers(Players),
-    			Players = [FirstPlayer| _],
+   				initPointManchePlayers(Players),
+    			Players = [First| _],
+    			FirstPlayer = player(First),
     			% distribuer retourne false quand il a fini de distribuer
-   				ignore(distribuer(NbCarte, player(FirstPlayer))),
-   				ignore(parier(player(FirstPlayer), NbCarte)),
-   				between(1, NbCarte, Index),
-    			write("Tour n°"),writeln(Index),
-   				playTour(player(FirstPlayer), Index, Winner),
-   				(Index \== NbCarte ->
-   				write("Tour terminé, le gagnant est "), writeln(Winner) ;
-                
-                write("Le vainqueur est "),
-                % reset les paris, les cartes jouées à chaque manche, le statut des cartes,
-                % normalement le jeu de carte associé à chaque joueur est vide vu qu'il a joué toute ses cartes
-                % on reset les points de la manche après avoir identifié le/les perdants
-   				resetCarteJouee, resetCartes, resetPari,
+   				ignore(distribuer(NbCarte, FirstPlayer)),
+   				ignore(parier(FirstPlayer, NbCarte)),
+   				playTour(FirstPlayer, 0, NbCarte),
+    			comparePariGain(),
+   				resetCarteJouee(), resetCartes(), resetPari(), resetPointManchePlayer(),
    				% compte les points perdus
-   				write("Manche terminée")).
+   				NbNextCarte is NbCarte - 1,
+   				writeln("Manche terminée"), playManche(Players, NbNextCarte).
 			
-initPlayers([]):-!.	
-initPlayers([H|T]):- assert(player(H)), assert(pointManchePlayer(player(H),0)), initPlayers(T).
+initPointManchePlayers([]):-!.	
+initPointManchePlayers([H|T]):-  assert(pointManchePlayer(player(H),0)), initPointManchePlayers(T).
 %initPlayers(Players):- length(Players, NbJoueur), between(1, NbJoueur, Index), nth1(Index,Players,Player), assert(player(Player)).
 
-resetCartes:- jeuCartes(Y), initCarte(Y).
+resetCartes():- jeuCartes(Y), initCarte(Y).
 
 initCarte([]):-!.
 initCarte([H|T]):- H = carte(X,Y,Z), retract(carte(X,Y,Z)), assert(carte(X,Y,0)), initCarte(T).
 
-resetCarteJouee:-findall(carteJouee(X,Y,Z),carteJouee(X,Y,Z),ListeCarteJouee),
+resetCarteJouee():-findall(carteJouee(X,Y,Z),carteJouee(X,Y,Z),ListeCarteJouee),
     			clearCarteJouee(ListeCarteJouee).
 
 clearCarteJouee([]):-!.
-clearCarteJouee([H,T]):- H = carteJouee(X,Y,Z), retract(carteJouee(X,Y,Z)), clearCarteJouee(T).
+clearCarteJouee([H|T]):- H = carteJouee(X,Y,Z), retract(carteJouee(X,Y,Z)), clearCarteJouee(T).
 
-resetPari:- findall((X,Y),pari(X,Y),ListePari), clearPari(ListePari).
+resetPari():- findall(pari(X,Y),pari(X,Y),ListePari), clearPari(ListePari).
 
 clearPari([]):-!.
-clearPari([H,T]):- H = pari(X,Y), retract(pari(X,Y)), clearPari(T).
+clearPari([H|T]):- H = pari(X,Y), retract(pari(X,Y)), clearPari(T).
+
+resetPointManchePlayer():-findall(pointManchePlayer(X,Y), pointManchePlayer(X,Y),ListePoint), clearPointManche(ListePoint).
+
+clearPointManche([]):-!.
+clearPointManche([H|T]):- H = pointManchePlayer(X,Y), retract(pointManchePlayer(X,Y)), clearPointManche(T).
 
 distribuer(NbCarte, Player):- write(Player), write(" pioche "),
     						piocherCartes(NbCarte, ListeCarte),
@@ -99,17 +107,21 @@ parier(Player, NbCarte):- write(Player), writeln(" réfléchit"),
     		nextPlayer(Player, NextPlayer),
     		parier(NextPlayer, NbCarte).
 
-iaPari(_, NbPli, NbCarte):-random(0, NbCarte, NbPli).
+iaPari(_, NbPli, NbCarte):-RandomNb is NbCarte + 1, random(0, RandomNb, NbPli).
 
 
-
-playTour(Player, TourEnCours, Winner):- ignore(jouerCarte(Player, TourEnCours)),
+playTour(_, TourMax, TourMax):-!.
+playTour(Player, TourEnCours, TourMax):- write("Tour n°"), writeln(TourEnCours),
+    						ignore(jouerCarte(Player, TourEnCours)),
     						findall(carteJouee(X,Y,_),carteJouee(X,Y,TourEnCours),ListeCarteJouee),
     						getBetterPlayer(ListeCarteJouee, Winner, TourEnCours),
     						pointManchePlayer(Winner, NbPointPlayer),
-    						retract(pointManchePlayer(Winner, NbPointPlayer)),
     						NbPointPlayerTemp is NbPointPlayer + 1,
-    						assert(pointManchePlayer(Winner, NbPointPlayerTemp)).
+    						retract(pointManchePlayer(Winner, NbPointPlayer)),
+    						assert(pointManchePlayer(Winner, NbPointPlayerTemp)),
+    						TourProchain is TourEnCours + 1,
+    						write("Tour terminé, le gagnant est "), writeln(Winner),
+    						playTour(Player, TourProchain, TourMax).
 
 getBetterPlayer(ListeCarteJouee, Winner, TourEnCours):- createListFromListAtom(2, ListeCarteJouee, _, ListeCartes),
     										createListFromListAtom(1, ListeCartes,_, ListeInt),
@@ -149,17 +161,21 @@ piocherCarte(NbCarteTotal, Carte):- repeat,
                                     assert(carte(R, Nom, 1)),
     								Carte = carte(R, Nom, 1),!.
 
+
+comparePariGain():- findall(player(X),player(X),ListePlayer), comparePariPlayer(ListePlayer).
+    
+comparePariPlayer([]):-!.
+comparePariPlayer([Player|T]):-pari(Player,PointParie), pointManchePlayer(Player,PointFait),  pointGame(Player, PointEnCours),
+    			NouveauPoint is PointEnCours + abs(PointParie - PointFait), retract(pointGame(Player, PointEnCours)), 
+    			assert(pointGame(Player, NouveauPoint)), comparePariPlayer(T).
+
 nextPlayer(Player, NextPlayer):- findall(player(X),player(X),Liste),
     							nextElement(Player, NextPlayer, Liste).
 
 nextElement(Current, Next, Liste):- indexof(Index, Current, Liste), NextIndex is Index, length(Liste, NbElement),
-    							   ( NextIndex =< NbElement -> nth0(NextIndex, Liste, Next) ; !).
+    							   NextIndex < NbElement, nth0(NextIndex, Liste, Next).
     
 indexof(Index, Item, List):- nth1(Index, List, Item).
-indexof(-1, _, _).
-enumPlayer(Player):- player(Player), writeln(Player),
-    				nextPlayer(Player, NextPlayer),
-    				enumPlayer(NextPlayer).
 
 max_list([H|T], M) :- max_list(T, H, M). 
 max_list([], C, C).
