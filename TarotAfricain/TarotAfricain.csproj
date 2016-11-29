@@ -38,10 +38,14 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Actions.cs" />
     <Compile Include="Core\Carte.cs" />
     <Compile Include="Core\GameObject.cs" />
     <Compile Include="Core\Joueur.cs" />
+    <Compile Include="Core\GameButton.cs" />
+    <Compile Include="Core\ObjectWithText.cs" />
     <Compile Include="Core\Tapis.cs" />
+    <Compile Include="KbHandler.cs" />
     <Compile Include="TarotAfricain.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,6 +61,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\button.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\Cartes\10_9-carreau.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

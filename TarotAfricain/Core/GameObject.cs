@@ -12,7 +12,7 @@ namespace TarotAfricain.Core
 {
     class GameObject
     {
-        public Vector2 Position;
+        public Rectangle Position;
         public Texture2D Texture;
 
         public void Draw(SpriteBatch spriteBatch)
