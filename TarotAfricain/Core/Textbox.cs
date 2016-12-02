@@ -8,25 +8,19 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class ObjectWithText : GameObject
+    class Textbox
     {
         public SpriteFont font;
-        public Vector2 PositionText;
+        public Vector2 Position;
         public string text;
 
-        public ObjectWithText()
+        public Textbox()
         {
             text = "";
         }
         public void DrawString(SpriteBatch spriteBatch)
         {
-            spriteBatch.DrawString(font, text, PositionText, Color.Black);
-        }
-
-        public void DrawObject(SpriteBatch spriteBatch)
-        {
-            Draw(spriteBatch);
-            DrawString(spriteBatch);
+            spriteBatch.DrawString(font, text, Position, Color.Black);
         }
     }
 }

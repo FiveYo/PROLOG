@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class GameButton : ObjectWithText
+    class GameButton : GameObject
     {
-        public GameButton(string text)
+        public GameButton()
         {
-            this.text = text;
         }
     }
 }

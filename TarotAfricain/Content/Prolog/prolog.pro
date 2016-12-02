@@ -47,7 +47,7 @@ carte(32, "AS trèfle", 0).
 
 jeuCartes(JeuCartes) :- findall(carte(X,Y,Z),carte(X,Y,Z),JeuCartes).
 
-playGame(Players, NbCarte):- initPlayers(Players), playManche(Players, NbCarte),!.
+playGame(Players, NbCarte):- writeln("toto"), initPlayers(Players), playManche(Players, NbCarte),!.
     
 initPlayers([]):-!.
 initPlayers([H|T]):- assert(player(H)), assert(pointGame(player(H),0)) , initPlayers(T).

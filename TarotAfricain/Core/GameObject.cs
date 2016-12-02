@@ -19,5 +19,22 @@ namespace TarotAfricain.Core
         {
             spriteBatch.Draw(Texture, Position, Color.White);
         }
+
+        public void Dispose()
+        {
+            this.Texture.Dispose();
+        }
+
+        public void Hide()
+        {
+            this.Position.Width = 0;
+            this.Position.Height = 0;
+        }
+
+        public void Show()
+        {
+            this.Position.Width = this.Texture.Width;
+            this.Position.Height = this.Texture.Height;
+        }
     }
 }

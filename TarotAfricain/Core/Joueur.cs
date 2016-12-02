@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,22 @@ namespace TarotAfricain.Core
 {
     class Joueur : GameObject
     {
-        public string nom;
-        public List<Carte> main;
-        public int paris;
-
-        public Joueur(string nom)
+        public ObjectWithText nameField;
+        public string _nom;
+        public string nom
         {
-            this.nom = nom;
+            get { return this._nom; }
+            set { _nom = this.nameField.text; }
+        }
+        public List<Carte> main;
+        public int points;
+        public int paris;
+        public bool IsIA;
+
+        public Joueur(string name)
+        {
+            this.nameField = new Core.ObjectWithText();
+            _nom = name;
         }
     }
 }

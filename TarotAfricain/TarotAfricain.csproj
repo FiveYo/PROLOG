@@ -45,6 +45,7 @@
     <Compile Include="Core\GameButton.cs" />
     <Compile Include="Core\ObjectWithText.cs" />
     <Compile Include="Core\Tapis.cs" />
+    <Compile Include="Core\Textbox.cs" />
     <Compile Include="KbHandler.cs" />
     <Compile Include="TarotAfricain.cs" />
     <Compile Include="Program.cs" />
@@ -62,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\button.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\button2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Content\Cartes\10_9-carreau.png">
@@ -160,7 +164,22 @@
     <Content Include="Content\Cartes\9_9-coeur.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\nbPlayersWindow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\newGameBtn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\nomPlayersWindow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Content\tapis.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\textbox_large.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\validerBtn.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Icon.ico" />
