@@ -22,5 +22,10 @@ namespace TarotAfricain.Core
         {
             spriteBatch.DrawString(font, text, Position, Color.Black);
         }
+
+        public void DrawWhiteString(SpriteBatch spriteBatch)
+        {
+            spriteBatch.DrawString(font, text, Position, Color.White);
+        }
     }
 }

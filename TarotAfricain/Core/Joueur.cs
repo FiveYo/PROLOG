@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class Joueur : GameObject
+    class Joueur : ObjectWithText
     {
         public ObjectWithText nameField;
         public Textbox pointField;
         public Textbox parisField;
-        public GameObject mainField;
         public string _nom;
         public string nom
         {
@@ -28,6 +27,8 @@ namespace TarotAfricain.Core
         public Joueur(string name)
         {
             this.nameField = new Core.ObjectWithText();
+            this.pointField = new Core.Textbox();
+            this.parisField = new Core.Textbox();
             _nom = name;
         }
     }

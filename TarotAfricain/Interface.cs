@@ -34,6 +34,7 @@ namespace TarotAfricain
             main.Add(new Core.Carte("Q pique"));
             main.Add(new Core.Carte("K carreau"));
             main.Add(new Core.Carte("7 coeur"));
+            main.Add(new Core.Carte("1 carreau"));
             return main;
         }
 

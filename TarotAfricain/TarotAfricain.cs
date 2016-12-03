@@ -21,17 +21,25 @@ namespace TarotAfricain
         SpriteBatch spriteBatch;
         public const int WINDOWS_WIDTH = 983;
         public const int WINDOWS_HEIGHT = 888;
+        public const int CARTE_WIDTH = 90;
+        public const int CARTE_HEIGHT = 113;
+        public const int JOUEUR_WIDTH = (WINDOWS_WIDTH - 40 ) / 2;
+        public const int JOUEUR_HEIGHT = CARTE_HEIGHT + 50;
         public GameState gameState = GameState.StartMenu;
         private MouseState oldMouseState;
         private KbHandler kb = new KbHandler();
         private Interface itf = new Interface();
 
-        Tapis tapis;
+        GameObject tapis;
+        GameObject tapisParis;
+        GameObject tableauPoints;
         GameButton newGameBtn;
         GameButton validerBtn;
         GameObject nbPlayerWindow;
         GameObject namePlayersWindow;
         Textbox nbPlayersTextbox;
+        Textbox numManche;
+        Textbox numTour;
         List<Joueur> joueurs;
         int nbJoueurs;
         int nbCartes;
@@ -88,12 +96,16 @@ namespace TarotAfricain
             }
 
 
-            tapis = new Core.Tapis();
+            tapis = new Core.GameObject();
+            tapisParis = new Core.GameObject();
+            tableauPoints = new Core.GameObject();
             newGameBtn = new Core.GameButton();
             validerBtn = new Core.GameButton();
             nbPlayerWindow = new Core.GameObject();
             nbPlayersTextbox = new Core.Textbox();
             namePlayersWindow = new Core.GameObject();
+            numManche = new Core.Textbox();
+            numTour = new Core.Textbox();
 
             joueurs = new List<Joueur>();
             manche = 0;
@@ -118,6 +130,22 @@ namespace TarotAfricain
             tapis.Texture = Content.Load<Texture2D>("tapis");
             tapis.Position = new Rectangle(0, 0, tapis.Texture.Width, tapis.Texture.Height);
 
+            // Tapis des paris
+            tapisParis.Texture = Content.Load<Texture2D>("tapisParis");
+            //tapisParis.Position = new Rectangle(tapis.Position.Width / 2 - 50, 30, 250, tapis.Position.Height - 60);
+            tapisParis.Position = new Rectangle(tapis.Position.Width / 2 - 50, 25, 100, tapisParis.Texture.Height);
+
+            // Tableau des points
+            tableauPoints.Texture = Content.Load<Texture2D>("tableauPoints");
+            //tableauPoints.Position = new Rectangle(tapisParis.Position.X + tapisParis.Position.Width + 20, tapisParis.Position.Y, 100, tapisParis.Position.Height);
+            tableauPoints.Position = new Rectangle(tapisParis.Position.X + tapisParis.Position.Width + 20, tapisParis.Position.Y, tableauPoints.Texture.Width, tableauPoints.Texture.Height);
+
+            // Textbox pour la manche et le tour
+            numManche.font = Content.Load<SpriteFont>("DefaultFont");
+            numTour.font = Content.Load<SpriteFont>("DefaultFont");
+            numManche.Position = new Vector2(tableauPoints.Position.X + tableauPoints.Position.Width + 50, 30);
+            numTour.Position = new Vector2(numManche.Position.X, numManche.Position.Y + 30);
+
             // Fenetre de selection du nombre de joueurs
             nbPlayerWindow.Texture = Content.Load<Texture2D>("nbPlayersWindow");
             nbPlayerWindow.Position = new Rectangle(WINDOWS_WIDTH / 2 - nbPlayerWindow.Texture.Width / 2,
@@ -138,6 +166,7 @@ namespace TarotAfricain
                                                 newGameBtn.Texture.Width, newGameBtn.Texture.Height);
             //newGameBtn.PositionText = new Vector2(newGameBtn.Position.X + 180, newGameBtn.Position.Y + 50);
 
+            // Bouton Valider
             validerBtn.Texture = Content.Load<Texture2D>("validerBtn");
             validerBtn.Position = new Rectangle(WINDOWS_WIDTH / 2 - validerBtn.Texture.Width / 2,
                                                 namePlayersWindow.Position.Y + namePlayersWindow.Position.Width + 20,
@@ -222,12 +251,26 @@ namespace TarotAfricain
                             {
                                 joueurs.Add(new Joueur("player" + (i+1)));
                                 joueurs[i].nameField.font = Content.Load<SpriteFont>("DefaultFont");
+                                joueurs[i].font = Content.Load<SpriteFont>("DefaultFont");
+                                joueurs[i].pointField.font = Content.Load<SpriteFont>("DefaultFont");
+                                joueurs[i].parisField.font = Content.Load<SpriteFont>("DefaultFont");
                                 joueurs[i].nameField.Texture = Content.Load<Texture2D>("textbox_large");
                                 joueurs[i].nameField.Position = new Rectangle(namePlayersWindow.Position.X + margeFenetre,
                                                                               namePlayersWindow.Position.Y + margeFenetre + margeEntete + (i * (heightNameField + 10)),
                                                                               namePlayersWindow.Position.Width - margeFenetre * 2,
                                                                               heightNameField);
                                 joueurs[i].nameField.PositionText = new Vector2(joueurs[i].nameField.Position.X + 10, joueurs[i].nameField.Position.Y + 10);
+                                if (nbJoueurs > 4)
+                                {
+                                    joueurs[i].Position = new Rectangle(50, (JOUEUR_HEIGHT + 10) * i + 30, JOUEUR_WIDTH, JOUEUR_HEIGHT);
+                                } else
+                                {
+                                    joueurs[i].Position = new Rectangle(50, (JOUEUR_HEIGHT + 10) * (i+1) + 30, JOUEUR_WIDTH, JOUEUR_HEIGHT);
+                                }
+                                
+                                joueurs[i].PositionText = new Vector2(joueurs[i].Position.X, joueurs[i].Position.Y + JOUEUR_HEIGHT / 3);
+                                joueurs[i].parisField.Position = new Vector2(tableauPoints.Position.X + 50, joueurs[i].PositionText.Y);
+                                joueurs[i].pointField.Position = new Vector2(tableauPoints.Position.X + 50 + (tableauPoints.Texture.Width / 2), joueurs[i].PositionText.Y);
                             }
                             itf.creerPartie(joueurs, nbCartes);
                             gameState += 1;
@@ -263,6 +306,7 @@ namespace TarotAfricain
                             foreach (Joueur j in joueurs)
                             {
                                 j.nom = j.nameField.text;
+                                j.text = j.nom;
                             }
                             gameState += 1;
                         }
@@ -277,12 +321,29 @@ namespace TarotAfricain
                 {
                     manche = itf.getManche();
                     tour = itf.getTour();
+
+                    // Redefinition de la zone texte correspondant au numero de tour et de manche
+                    numManche.text = "Manche : " + manche.ToString();
+                    numTour.text = "Tour : " + tour.ToString();
+
                     foreach (Joueur j in joueurs)
                     {
                         j.main = itf.getMain(j.nom);
                         j.points = itf.getPoints(j.nom);
                         j.paris = itf.getParis(j.nom);
                         j.carteJouee = itf.carteJouee(j.nom);
+
+                        // Redefinition du dessin de chaque carte de la main
+                        foreach (Carte c in j.main)
+                        {
+                            int i = j.main.IndexOf(c);
+                            c.Position = new Rectangle(j.Position.X + 150 + i * 25, j.Position.Y + 20, CARTE_WIDTH, CARTE_HEIGHT);
+                            c.Texture = Content.Load<Texture2D>("Cartes/" + c.nom);
+                        }
+
+                        // Redefinition de la zone texte correspondant au paris et au point
+                        j.parisField.text = j.paris.ToString();
+                        j.pointField.text = j.points.ToString();
                     }
                 }
             }
@@ -324,11 +385,26 @@ namespace TarotAfricain
             }
             else if (gameState == GameState.PlayGame)
             {
+                tapisParis.Draw(spriteBatch);
+                tableauPoints.Draw(spriteBatch);
+                numManche.DrawString(spriteBatch);
+                numTour.DrawString(spriteBatch);
+
                 foreach (Joueur j in joueurs)
                 {
+                    j.DrawString(spriteBatch);
+                    j.parisField.DrawWhiteString(spriteBatch);
+                    j.pointField.DrawWhiteString(spriteBatch);
                     //TODO: afficher les mains, paris, points des joueurs
+                    try {
+                        foreach (Carte c in j.main)
+                        {
+                            c.Draw(spriteBatch);
+                        }
+                    } catch (System.NullReferenceException) {
+                        // Si la main n'est pas encore affectee on attend le prochain tour de Update()
+                    }
                 }
-
             }
 
             spriteBatch.End();
