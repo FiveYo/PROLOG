@@ -24,6 +24,7 @@ namespace TarotAfricain
         public GameState gameState = GameState.StartMenu;
         private MouseState oldMouseState;
         private KbHandler kb = new KbHandler();
+        private Interface itf = new Interface();
 
         Tapis tapis;
         GameButton newGameBtn;
@@ -98,6 +99,7 @@ namespace TarotAfricain
             manche = 0;
             tour = 0;
             nbJoueurs = 0;
+            nbCartes = 5;
 
             this.IsMouseVisible = true;
             base.Initialize();
@@ -227,6 +229,7 @@ namespace TarotAfricain
                                                                               heightNameField);
                                 joueurs[i].nameField.PositionText = new Vector2(joueurs[i].nameField.Position.X + 10, joueurs[i].nameField.Position.Y + 10);
                             }
+                            itf.creerPartie(joueurs, nbCartes);
                             gameState += 1;
                         }
                     }
@@ -270,7 +273,18 @@ namespace TarotAfricain
             // Écran de Jeu
             } else if (gameState == GameState.PlayGame)
             {
-
+                if (!itf.isGameOver())
+                {
+                    manche = itf.getManche();
+                    tour = itf.getTour();
+                    foreach (Joueur j in joueurs)
+                    {
+                        j.main = itf.getMain(j.nom);
+                        j.points = itf.getPoints(j.nom);
+                        j.paris = itf.getParis(j.nom);
+                        j.carteJouee = itf.carteJouee(j.nom);
+                    }
+                }
             }
 
             oldMouseState = mouseState;
