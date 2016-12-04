@@ -77,31 +77,6 @@ namespace TarotAfricain
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            // Loading the prolog kbase
-            if (!PlEngine.IsInitialized)
-            {
-                //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
-                string filename = Path.Combine(Content.RootDirectory + @"\Prolog\prolog.pro");
-                // Debug only :
-                // FileStream fs = File.Open(filename, FileMode.Open);
-
-
-
-                String[] param = { "-q", "-f", filename };
-                PlEngine.Initialize(param);
-                PlQuery.PlCall("playGame([\"j1\",\"j2\"],3).");
-                using (PlQuery q = new PlQuery("pointGame(X,Y)."))
-                {
-                    foreach (PlQueryVariables v in q.SolutionVariables)
-                    {
-                        Debug.Write(v["X"].ToString());
-                        Debug.WriteLine(" : " + v["Y"].ToString());
-                    }
-                }
-                PlEngine.PlCleanup();
-            }
-
-
             tapis = new Core.GameObject();
             tapisParis = new Core.GameObject();
             tableauPoints = new Core.GameObject();
@@ -122,6 +97,9 @@ namespace TarotAfricain
 
             this.IsMouseVisible = true;
             base.Initialize();
+
+            InterfacePl pl = new InterfacePl();
+            pl.StartGame(new List<string> { "j1", "j2" }, new List<int> { 1, 1 }, 3);
         }
 
         /// <summary>

@@ -45,6 +45,7 @@
     <Compile Include="Core\Textbox.cs" />
     <Compile Include="EventsHandler.cs" />
     <Compile Include="GenerateEvents.cs" />
+    <Compile Include="InterfacePl.cs" />
     <Compile Include="KbHandler.cs" />
     <Compile Include="TarotAfricain.cs" />
     <Compile Include="Program.cs" />
@@ -55,7 +56,7 @@
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="SwiPlCs">
-      <HintPath>..\packages\Swi-Prolog\SwiPlCs.dll</HintPath>
+      <HintPath>packages\Swi-Prolog\SwiPlCs.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
@@ -193,7 +194,7 @@
     <MonoGameContentReference Include="Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Content\Prolog\prolog.pro">
+    <None Include="TarotAfrikMulti.pl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
