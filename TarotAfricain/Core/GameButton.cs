@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class GameButton : GameObject
+    public class GameButton : GameObject
     {
         public GameButton()
         {

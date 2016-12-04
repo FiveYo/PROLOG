@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class ObjectWithText : GameObject
+    public class ObjectWithText : GameObject
     {
         public SpriteFont font;
         public Vector2 PositionText;

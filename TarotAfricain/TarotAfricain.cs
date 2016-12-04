@@ -29,6 +29,7 @@ namespace TarotAfricain
         private MouseState oldMouseState;
         private KbHandler kb = new KbHandler();
         private Interface itf = new Interface();
+        private EventsHandler eh;
 
         GameObject tapis;
         GameObject tapisParis;
@@ -40,11 +41,14 @@ namespace TarotAfricain
         Textbox nbPlayersTextbox;
         Textbox numManche;
         Textbox numTour;
-        List<Joueur> joueurs;
-        int nbJoueurs;
-        int nbCartes;
-        int manche;
-        int tour;
+        public List<Joueur> joueurs;
+        public int nbJoueurs;
+        public int nbCartes;
+        public int manche;
+        public int tour;
+        public bool IsGameOver;
+
+        public bool debugVariable = true;
 
         public enum GameState
         {
@@ -60,6 +64,7 @@ namespace TarotAfricain
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = WINDOWS_WIDTH;
             graphics.PreferredBackBufferHeight = WINDOWS_HEIGHT;
+            eh = new EventsHandler(this);
         }
 
         /// <summary>
@@ -112,6 +117,7 @@ namespace TarotAfricain
             tour = 0;
             nbJoueurs = 0;
             nbCartes = 5;
+            IsGameOver = false;
 
             this.IsMouseVisible = true;
             base.Initialize();
@@ -317,29 +323,42 @@ namespace TarotAfricain
             // Écran de Jeu
             } else if (gameState == GameState.PlayGame)
             {
-                if (!itf.isGameOver())
+                // DEBUG : Test un envoi d'événements -------------------------------------------
+                if (debugVariable)
                 {
-                    manche = itf.getManche();
-                    tour = itf.getTour();
-
+                    GenerateTestEvents testEvents = new GenerateTestEvents();
+                    eh.Subscribe(testEvents);
+                    testEvents.Send();
+                    debugVariable = false;
+                }
+                // ------------------------------------------------------------------------------
+                
+                if (!IsGameOver)
+                {
                     // Redefinition de la zone texte correspondant au numero de tour et de manche
                     numManche.text = "Manche : " + manche.ToString();
                     numTour.text = "Tour : " + tour.ToString();
 
                     foreach (Joueur j in joueurs)
                     {
-                        j.main = itf.getMain(j.nom);
-                        j.points = itf.getPoints(j.nom);
-                        j.paris = itf.getParis(j.nom);
-                        j.carteJouee = itf.carteJouee(j.nom);
-
                         // Redefinition du dessin de chaque carte de la main
-                        foreach (Carte c in j.main)
+                        if (j.main != null)
                         {
-                            int i = j.main.IndexOf(c);
-                            c.Position = new Rectangle(j.Position.X + 150 + i * 25, j.Position.Y + 20, CARTE_WIDTH, CARTE_HEIGHT);
-                            c.Texture = Content.Load<Texture2D>("Cartes/" + c.nom);
+                            foreach (Carte c in j.main)
+                            {
+                                int i = j.main.IndexOf(c);
+                                c.Position = new Rectangle(j.Position.X + 150 + i * 25, j.Position.Y + 20, CARTE_WIDTH, CARTE_HEIGHT);
+                                c.Texture = Content.Load<Texture2D>("Cartes/" + c.nom);
+                            }
                         }
+                        
+                        // Redéfinition du dessin de la carte jouée
+                        if (j.carteJouee != null)
+                        {
+                            j.carteJouee.Position = new Rectangle(tapisParis.Position.X + 5, j.Position.Y + 20, CARTE_WIDTH, CARTE_HEIGHT);
+                            j.carteJouee.Texture = Content.Load<Texture2D>("Cartes/" + j.carteJouee.nom);
+                        }
+                        
 
                         // Redefinition de la zone texte correspondant au paris et au point
                         j.parisField.text = j.paris.ToString();
@@ -396,14 +415,18 @@ namespace TarotAfricain
                     j.parisField.DrawWhiteString(spriteBatch);
                     j.pointField.DrawWhiteString(spriteBatch);
                     //TODO: afficher les mains, paris, points des joueurs
-                    try {
+                    if (j.main != null)
+                    {
                         foreach (Carte c in j.main)
                         {
                             c.Draw(spriteBatch);
                         }
-                    } catch (System.NullReferenceException) {
-                        // Si la main n'est pas encore affectee on attend le prochain tour de Update()
                     }
+                    if (j.carteJouee != null)
+                    {
+                        j.carteJouee.Draw(spriteBatch);
+                    }
+                    
                 }
             }
 

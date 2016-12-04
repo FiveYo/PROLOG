@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class Textbox
+    public class Textbox
     {
         public SpriteFont font;
         public Vector2 Position;

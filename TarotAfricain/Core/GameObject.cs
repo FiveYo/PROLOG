@@ -10,14 +10,19 @@ using SbsSW.SwiPlCs;
 
 namespace TarotAfricain.Core
 {
-    class GameObject
+    public class GameObject
     {
         public Rectangle Position;
         public Texture2D Texture;
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Texture, Position, Color.White);
+            try
+            {
+                spriteBatch.Draw(Texture, Position, Color.White);
+            }
+            catch (System.NullReferenceException) { }
+            catch (System.ArgumentNullException) { }
         }
 
         public void Dispose()

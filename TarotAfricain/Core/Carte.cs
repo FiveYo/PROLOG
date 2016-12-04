@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class Carte : GameObject
+    public class Carte : GameObject
     {
         // public string valeur;
         // public string couleur;

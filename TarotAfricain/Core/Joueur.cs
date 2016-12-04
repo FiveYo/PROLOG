@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TarotAfricain.Core
 {
-    class Joueur : ObjectWithText
+    public class Joueur : ObjectWithText
     {
         public ObjectWithText nameField;
         public Textbox pointField;
@@ -20,7 +20,7 @@ namespace TarotAfricain.Core
         }
         public List<Carte> main;
         public int points;
-        public string carteJouee;
+        public Carte carteJouee;
         public int paris;
         public bool IsIA;
 
