@@ -23,7 +23,8 @@ namespace TarotAfricain
             g.OnGameOver += new GenerateEvents.GameOverEventHandler(OnGameOverHandler);
             g.OnMainChanged += new GenerateEvents.ChangedMainEventHandler(OnMainChangedHandler);
             g.OnParisChanged += new GenerateEvents.ChangedParisEventHandler(OnParisChangedHandler);
-            g.OnPointsChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointChangedHandler);
+            g.OnPointsGameChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointGameChangedHandler);
+            g.OnPointsMancheChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointMancheChangedHandler);
         }
         public void OnTourChangedHandler(object sender, NouveauTour e)
         {
@@ -35,10 +36,15 @@ namespace TarotAfricain
             jeu.manche = e.manche;
         }
 
-        public void OnPointChangedHandler(object sender, NouveauxPoints e)
+        public void OnPointGameChangedHandler(object sender, NouveauxPoints e)
         {
             Joueur j = jeu.joueurs.Find(v => v.nom.Equals(e.joueur));
-            j.points = e.points;
+            j.pointsGame = e.points;
+        }
+        public void OnPointMancheChangedHandler(object sender, NouveauxPoints e)
+        {
+            Joueur j = jeu.joueurs.Find(v => v.nom.Equals(e.joueur));
+            j.pointsManche = e.points;
         }
         public void OnParisChangedHandler(object sender, NouveauParis e)
         {

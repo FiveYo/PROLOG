@@ -19,7 +19,8 @@ namespace TarotAfricain.Core
             set { _nom = this.nameField.text; }
         }
         public List<Carte> main;
-        public int points;
+        public int pointsManche;
+        public int pointsGame;
         public Carte carteJouee;
         public int paris;
         public bool IsIA;

@@ -84,7 +84,8 @@ namespace TarotAfricain
         public event ChangedMainEventHandler OnMainChanged;
         public event ChangedParisEventHandler OnParisChanged;
         public event ChangedCarteJoueeEventHandler OnCarteJoueeChanged;
-        public event ChangedPointsEventHandler OnPointsChanged;
+        public event ChangedPointsEventHandler OnPointsMancheChanged;
+        public event ChangedPointsEventHandler OnPointsGameChanged;
         public event GameOverEventHandler OnGameOver;
 
         public void mancheChanged(int manche)
@@ -133,11 +134,19 @@ namespace TarotAfricain
             }
         }
 
-        public void pointsChanged(string joueur, int points)
+        public void pointsMancheChanged(string joueur, int points)
         {
-            if (OnPointsChanged != null)
+            if (OnPointsMancheChanged != null)
             {
-                OnPointsChanged(this, new NouveauxPoints(joueur, points));
+                OnPointsMancheChanged(this, new NouveauxPoints(joueur, points));
+            }
+        }
+
+        public void pointsGameChanged(string joueur, int points)
+        {
+            if (OnPointsGameChanged != null)
+            {
+                OnPointsGameChanged(this, new NouveauxPoints(joueur, points));
             }
         }
 
@@ -189,10 +198,15 @@ namespace TarotAfricain
                 OnCarteJoueeChanged(this, new NouvelleCarteJouee("player1", carte1));
                 OnCarteJoueeChanged(this, new NouvelleCarteJouee("player2", carte2));
             }
-            if (OnPointsChanged != null)
+            if (OnPointsGameChanged != null)
             {
-                OnPointsChanged(this, new NouveauxPoints("player1", 5));
-                OnPointsChanged(this, new NouveauxPoints("player2", 7));
+                OnPointsGameChanged(this, new NouveauxPoints("player1", 5));
+                OnPointsGameChanged(this, new NouveauxPoints("player2", 7));
+            }
+            if (OnPointsMancheChanged != null)
+            {
+                OnPointsMancheChanged(this, new NouveauxPoints("player1", 0));
+                OnPointsMancheChanged(this, new NouveauxPoints("player2", 3));
             }
             if (OnGameOver != null)
             {

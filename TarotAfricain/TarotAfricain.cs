@@ -277,7 +277,7 @@ namespace TarotAfricain
                                 
                                 joueurs[i].PositionText = new Vector2(joueurs[i].Position.X, joueurs[i].Position.Y + JOUEUR_HEIGHT / 3);
                                 joueurs[i].parisField.Position = new Vector2(tableauPoints.Position.X + 50, joueurs[i].PositionText.Y);
-                                joueurs[i].pointField.Position = new Vector2(tableauPoints.Position.X + 50 + (tableauPoints.Texture.Width / 2), joueurs[i].PositionText.Y);
+                                joueurs[i].pointField.Position = new Vector2(tableauPoints.Position.X + 20 + (tableauPoints.Texture.Width / 2), joueurs[i].PositionText.Y);
                             }
                             gameState += 1;
                         }
@@ -363,7 +363,7 @@ namespace TarotAfricain
 
                         // Redefinition de la zone texte correspondant au paris et au point
                         j.parisField.text = j.paris.ToString();
-                        j.pointField.text = j.points.ToString();
+                        j.pointField.text = String.Format("{0} - {1}", j.pointsManche.ToString(), j.pointsGame.ToString());
                     }
                 }
             }
