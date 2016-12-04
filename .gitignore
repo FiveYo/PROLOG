@@ -240,3 +240,8 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# dll SwiPLCs
+!**/SwiPlCs.dll
+
+!**/packages/Swi-Prolog/SwiPlCs.dll
