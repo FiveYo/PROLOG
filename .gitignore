@@ -244,3 +244,4 @@ ModelManifest.xml
 # dll SwiPLCs
 !**/SwiPlCs.dll
 
+!**/packages/Swi-Prolog/SwiPlCs.dll
