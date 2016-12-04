@@ -41,12 +41,10 @@
     <Compile Include="Core\Carte.cs" />
     <Compile Include="Core\GameObject.cs" />
     <Compile Include="Core\Joueur.cs" />
-    <Compile Include="Core\GameButton.cs" />
     <Compile Include="Core\ObjectWithText.cs" />
     <Compile Include="Core\Textbox.cs" />
     <Compile Include="EventsHandler.cs" />
-    <Compile Include="GenerateTestEvents.cs" />
-    <Compile Include="Interface.cs" />
+    <Compile Include="GenerateEvents.cs" />
     <Compile Include="KbHandler.cs" />
     <Compile Include="TarotAfricain.cs" />
     <Compile Include="Program.cs" />

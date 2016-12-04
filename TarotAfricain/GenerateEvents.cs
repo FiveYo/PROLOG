@@ -70,7 +70,7 @@ namespace TarotAfricain
         }
     }
 
-    public class GenerateTestEvents
+    public class GenerateEvents
     {
         public delegate void ChangedMancheEventHandler(object sender, NouvelleManche e);
         public delegate void ChangedTourEventHandler(object sender, NouveauTour e);
@@ -86,6 +86,68 @@ namespace TarotAfricain
         public event ChangedCarteJoueeEventHandler OnCarteJoueeChanged;
         public event ChangedPointsEventHandler OnPointsChanged;
         public event GameOverEventHandler OnGameOver;
+
+        public void mancheChanged(int manche)
+        {
+            if (OnMancheChanged != null)
+            {
+                OnMancheChanged(this, new NouvelleManche(manche));
+            }
+        }
+
+        public void tourChanged(int tour)
+        {
+            if (OnTourChanged != null)
+            {
+                OnTourChanged(this, new NouveauTour(tour));
+            }
+        }
+
+        public void mainChanged(string joueur, List<string> main)
+        {
+            if (OnMainChanged != null)
+            {
+                List<Carte> cartes = new List<Carte>();
+                foreach (string name in main)
+                {
+                    cartes.Add(new Carte(name));
+                }
+                OnMainChanged(this, new NouvelleMain(joueur, cartes));
+            }
+        }
+
+        public void parisChanged(string joueur, int paris)
+        {
+            if (OnParisChanged != null)
+            {
+                OnParisChanged(this, new NouveauParis(joueur, paris));
+            }
+        }
+
+        public void carteJoueeChanged(string joueur, string carteName)
+        {
+            if (OnCarteJoueeChanged != null)
+            {
+                Carte carte = new Core.Carte(carteName);
+                OnCarteJoueeChanged(this, new NouvelleCarteJouee(joueur, carte));
+            }
+        }
+
+        public void pointsChanged(string joueur, int points)
+        {
+            if (OnPointsChanged != null)
+            {
+                OnPointsChanged(this, new NouveauxPoints(joueur, points));
+            }
+        }
+
+        public void gameOver()
+        {
+            if (OnGameOver != null)
+            {
+                OnGameOver(this, EventArgs.Empty);
+            }
+        }
 
         public void Send()
         {

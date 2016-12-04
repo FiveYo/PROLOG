@@ -28,14 +28,14 @@ namespace TarotAfricain
         public GameState gameState = GameState.StartMenu;
         private MouseState oldMouseState;
         private KbHandler kb = new KbHandler();
-        private Interface itf = new Interface();
         private EventsHandler eh;
+        private GenerateEvents generateEvents;
 
         GameObject tapis;
         GameObject tapisParis;
         GameObject tableauPoints;
-        GameButton newGameBtn;
-        GameButton validerBtn;
+        GameObject newGameBtn;
+        GameObject validerBtn;
         GameObject nbPlayerWindow;
         GameObject namePlayersWindow;
         Textbox nbPlayersTextbox;
@@ -65,6 +65,7 @@ namespace TarotAfricain
             graphics.PreferredBackBufferWidth = WINDOWS_WIDTH;
             graphics.PreferredBackBufferHeight = WINDOWS_HEIGHT;
             eh = new EventsHandler(this);
+            generateEvents = new GenerateEvents();
         }
 
         /// <summary>
@@ -104,8 +105,8 @@ namespace TarotAfricain
             tapis = new Core.GameObject();
             tapisParis = new Core.GameObject();
             tableauPoints = new Core.GameObject();
-            newGameBtn = new Core.GameButton();
-            validerBtn = new Core.GameButton();
+            newGameBtn = new Core.GameObject();
+            validerBtn = new Core.GameObject();
             nbPlayerWindow = new Core.GameObject();
             nbPlayersTextbox = new Core.Textbox();
             namePlayersWindow = new Core.GameObject();
@@ -278,7 +279,6 @@ namespace TarotAfricain
                                 joueurs[i].parisField.Position = new Vector2(tableauPoints.Position.X + 50, joueurs[i].PositionText.Y);
                                 joueurs[i].pointField.Position = new Vector2(tableauPoints.Position.X + 50 + (tableauPoints.Texture.Width / 2), joueurs[i].PositionText.Y);
                             }
-                            itf.creerPartie(joueurs, nbCartes);
                             gameState += 1;
                         }
                     }
@@ -326,9 +326,10 @@ namespace TarotAfricain
                 // DEBUG : Test un envoi d'événements -------------------------------------------
                 if (debugVariable)
                 {
-                    GenerateTestEvents testEvents = new GenerateTestEvents();
-                    eh.Subscribe(testEvents);
-                    testEvents.Send();
+                    //GenerateEvents testEvents = new GenerateEvents();
+                    eh.Subscribe(generateEvents);
+                    generateEvents.Send();
+                    generateEvents.mancheChanged(55);
                     debugVariable = false;
                 }
                 // ------------------------------------------------------------------------------

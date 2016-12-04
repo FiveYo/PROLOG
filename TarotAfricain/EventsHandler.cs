@@ -15,24 +15,24 @@ namespace TarotAfricain
         {
             this.jeu = jeu;
         }
-        public void Subscribe(GenerateTestEvents g)
+        public void Subscribe(GenerateEvents g)
         {
-            g.OnTourChanged += new GenerateTestEvents.ChangedTourEventHandler(OnTourChangedHandler);
-            g.OnMancheChanged += new GenerateTestEvents.ChangedMancheEventHandler(OnMancheChangedHandler);
-            g.OnCarteJoueeChanged += new GenerateTestEvents.ChangedCarteJoueeEventHandler(OnCarteJoueeChangedHandler);
-            g.OnGameOver += new GenerateTestEvents.GameOverEventHandler(OnGameOverHandler);
-            g.OnMainChanged += new GenerateTestEvents.ChangedMainEventHandler(OnMainChangedHandler);
-            g.OnParisChanged += new GenerateTestEvents.ChangedParisEventHandler(OnParisChangedHandler);
-            g.OnPointsChanged += new GenerateTestEvents.ChangedPointsEventHandler(OnPointChangedHandler);
+            g.OnTourChanged += new GenerateEvents.ChangedTourEventHandler(OnTourChangedHandler);
+            g.OnMancheChanged += new GenerateEvents.ChangedMancheEventHandler(OnMancheChangedHandler);
+            g.OnCarteJoueeChanged += new GenerateEvents.ChangedCarteJoueeEventHandler(OnCarteJoueeChangedHandler);
+            g.OnGameOver += new GenerateEvents.GameOverEventHandler(OnGameOverHandler);
+            g.OnMainChanged += new GenerateEvents.ChangedMainEventHandler(OnMainChangedHandler);
+            g.OnParisChanged += new GenerateEvents.ChangedParisEventHandler(OnParisChangedHandler);
+            g.OnPointsChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointChangedHandler);
         }
         public void OnTourChangedHandler(object sender, NouveauTour e)
         {
-            jeu.tour += e.tour;
+            jeu.tour = e.tour;
         }
 
         public void OnMancheChangedHandler(object sender, NouvelleManche e)
         {
-            jeu.manche += e.manche;
+            jeu.manche = e.manche;
         }
 
         public void OnPointChangedHandler(object sender, NouveauxPoints e)
