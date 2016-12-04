@@ -99,7 +99,7 @@ namespace TarotAfricain
             base.Initialize();
 
             InterfacePl pl = new InterfacePl();
-            pl.StartGame(new List<string> { "j1", "j2" }, new List<int> { 1, 1 }, 3);
+            //pl.StartGame(new List<string> { "j1", "j2" }, new List<int> { 1, 1 }, 3);
         }
 
         /// <summary>
