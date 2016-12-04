@@ -10,6 +10,7 @@ namespace TarotAfricain.Core
     public class Joueur : ObjectWithText
     {
         public ObjectWithText nameField;
+        public ObjectWithText iaField;
         public Textbox pointField;
         public Textbox parisField;
         public string _nom;
@@ -24,13 +25,17 @@ namespace TarotAfricain.Core
         public Carte carteJouee;
         public int paris;
         public bool IsIA;
+        public bool selectionne;
 
         public Joueur(string name)
         {
             this.nameField = new Core.ObjectWithText();
+            this.iaField = new Core.ObjectWithText();
             this.pointField = new Core.Textbox();
             this.parisField = new Core.Textbox();
             _nom = name;
+            selectionne = false;
+            IsIA = true;
         }
     }
 }

@@ -257,16 +257,24 @@ namespace TarotAfricain
                             for (int i=0; i<nbJoueurs; i++)
                             {
                                 joueurs.Add(new Joueur("player" + (i+1)));
+                                joueurs[i].nameField.text = joueurs[i].nom;
                                 joueurs[i].nameField.font = Content.Load<SpriteFont>("DefaultFont");
+                                joueurs[i].iaField.font = Content.Load<SpriteFont>("DefaultFont");
                                 joueurs[i].font = Content.Load<SpriteFont>("DefaultFont");
                                 joueurs[i].pointField.font = Content.Load<SpriteFont>("DefaultFont");
                                 joueurs[i].parisField.font = Content.Load<SpriteFont>("DefaultFont");
                                 joueurs[i].nameField.Texture = Content.Load<Texture2D>("textbox_large");
+                                joueurs[i].iaField.Texture = Content.Load<Texture2D>("textbox_small");
                                 joueurs[i].nameField.Position = new Rectangle(namePlayersWindow.Position.X + margeFenetre,
                                                                               namePlayersWindow.Position.Y + margeFenetre + margeEntete + (i * (heightNameField + 10)),
-                                                                              namePlayersWindow.Position.Width - margeFenetre * 2,
+                                                                              namePlayersWindow.Position.Width - margeFenetre * 2 - 50,
                                                                               heightNameField);
+                                joueurs[i].iaField.Position = new Rectangle(joueurs[i].nameField.Position.X + 5 + joueurs[i].nameField.Position.Width,
+                                                                            joueurs[i].nameField.Position.Y,
+                                                                            50,
+                                                                            heightNameField);
                                 joueurs[i].nameField.PositionText = new Vector2(joueurs[i].nameField.Position.X + 10, joueurs[i].nameField.Position.Y + 10);
+                                joueurs[i].iaField.PositionText = new Vector2(joueurs[i].iaField.Position.X + 20, joueurs[i].iaField.Position.Y + 10);
                                 if (nbJoueurs > 4)
                                 {
                                     joueurs[i].Position = new Rectangle(50, (JOUEUR_HEIGHT + 10) * i + 30, JOUEUR_WIDTH, JOUEUR_HEIGHT);
@@ -287,12 +295,60 @@ namespace TarotAfricain
             // Écran Choix noms joueurs
             } else if (gameState == GameState.ChooseNames)
             {
-                // Affichage des noms
                 foreach (var j in joueurs)
                 {
-                    j.nameField.text = j.nom;
-                }
+                    // Si click dans le champ du joueur
+                    if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                    {
+                        if (j.nameField.Position.X < x && x < (j.nameField.Position.X + j.nameField.Position.Width) &&
+                            j.nameField.Position.Y < y && y < (j.nameField.Position.Y + j.nameField.Position.Height))
+                        {
+                            // On vide le champ cliqué
+                            kb.text = "";
+                            // On deselectionne tous les joueurs
+                            foreach (Joueur jr in joueurs)
+                            {
+                                // Si le joueur etait precedemment selectionne on supprime le curseur de texte
+                                if (jr.selectionne)
+                                {
+                                    jr.nameField.text = jr.nameField.text.Substring(0, jr.nameField.text.Length - 1);
+                                }
+                                jr.selectionne = false;
+                            }
+                            // On selectionne le bon
+                            j.selectionne = true;
+                        }
+                    }
 
+                    // Si click dans le champs IA d'un joueur
+                    if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                    {
+                        if (j.iaField.Position.X < x && x < (j.iaField.Position.X + j.iaField.Position.Width) &&
+                            j.iaField.Position.Y < y && y < (j.iaField.Position.Y + j.iaField.Position.Height))
+                        {
+                            // Si le champ clické est vide on le set à x
+                            if (j.iaField.text == "")
+                            {
+                                j.iaField.text = "x";
+                            } else
+                            {
+                                j.iaField.text = "";
+                            }
+                        }
+                    }
+
+                    // Gestion de la saisie
+                    if (kb.text.Length > 10)
+                    {
+                        kb.text = kb.text.Substring(0, 10);
+                    }
+                    if (j.selectionne)
+                    {
+                        j.nameField.text = kb.text.ToLower() + "|";
+                    }
+                    
+                }
+                
                 // Si click sur le bouton valider
                 if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
                 {
@@ -300,19 +356,54 @@ namespace TarotAfricain
                         validerBtn.Position.Y < y && y < (validerBtn.Position.Y + validerBtn.Position.Height))
                     {
                         bool nomsValides = true;
+                        List<String> noms = new List<string>();
+
                         foreach (var j in joueurs)
                         {
+                            // On supprime le curseur de texte du dernier joueur selectionne
+                            if (j.selectionne)
+                            {
+                                j.nameField.text = j.nameField.text.Substring(0, j.nameField.text.Length - 1);
+                                j.selectionne = false;
+                            }
+
+                            // On verifie qu'aucun nom ne soit vide
                             if (j.nameField.text.Length == 0)
                             {
                                 nomsValides = false;
                             }
+
+                            // On ajoute le nom à la liste de noms
+                            noms.Add(j.nameField.text);
                         }
+
+                        // On verifie que tous les noms soient bien distincts
+                        for (int i=0; i<noms.Count; i++)
+                        {
+                            string name = noms[i];
+                            noms.RemoveAt(i);
+                            if (noms.Contains(name))
+                            {
+                                nomsValides = false;
+                            }
+                            noms.Insert(i, name);
+                        }
+
                         if (nomsValides)
                         {
                             foreach (Joueur j in joueurs)
                             {
                                 j.nom = j.nameField.text;
                                 j.text = j.nom;
+                                if (j.iaField.text == "")
+                                {
+                                    j.IsIA = false;
+                                }
+                                else
+                                {
+                                    j.IsIA = true;
+                                    j.text += "\n(IA)";
+                                }
                             }
                             gameState += 1;
                         }
@@ -400,6 +491,7 @@ namespace TarotAfricain
                 foreach (var j in joueurs)
                 {
                     j.nameField.DrawObject(spriteBatch);
+                    j.iaField.DrawObject(spriteBatch);
                 }
                 validerBtn.Draw(spriteBatch);
             }
