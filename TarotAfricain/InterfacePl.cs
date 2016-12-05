@@ -6,15 +6,37 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TarotAfricain
 {
     class InterfacePl
     {
+        Thread tarot;
+        List<string> names;
+        List<int> isIa;
+        int nbCarte;
+
         public void StartGame(List<string> names, List<int> isIa, int nbCarte)
         {
-            // Loading the prolog kbase
+            this.names = names;
+            this.isIa = isIa;
+            this.nbCarte = nbCarte;
+            tarot = new Thread(startGame);
+            tarot.Start();
+        }
+
+        public void StopGame()
+        {
+            if(tarot.IsAlive)
+            {
+                tarot.Abort();
+            }
+        }
+
+        private void startGame()
+        {
             if (!PlEngine.IsInitialized)
             {
                 //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
@@ -32,18 +54,7 @@ namespace TarotAfricain
                 PlEngine.Initialize(param);
 
                 InitializeCallBack();
-
                 PlQuery.PlCall(query);
-
-                //using (PlQuery q = new PlQuery("pointGame(X,Y)."))
-                //{
-                //    foreach (PlQueryVariables v in q.SolutionVariables)
-                //    {
-                //        Debug.Write(v["X"].ToString());
-                //        Debug.WriteLine(" : " + v["Y"].ToString());
-                //    }
-                //}
-                //PlEngine.PlCleanup();
             }
         }
 
@@ -90,11 +101,14 @@ namespace TarotAfricain
             {
                 PlEngine.RegisterForeign(item);
             }
+
         }
 
         private bool callPlayerJoue(PlTerm carte)
         {
+            Debug.WriteLine("hello");
             Debug.WriteLine(carte.ToString());
+            Thread.Sleep(10000);
             return true;
         }
 
