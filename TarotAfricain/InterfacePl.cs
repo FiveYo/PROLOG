@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using TarotAfricain.Core;
+
 namespace TarotAfricain
 {
     class InterfacePl
@@ -18,6 +20,7 @@ namespace TarotAfricain
         List<int> isIa;
         int nbCarte;
         GenerateEvents events;
+        const int timeIaThink = 1500;
         
         public void StartGame(GenerateEvents generateEvents, List<string> names, List<int> isIa, int nbCarte)
         {
@@ -33,6 +36,7 @@ namespace TarotAfricain
         {
             if(tarot.IsAlive)
             {
+                PlEngine.PlHalt();
                 tarot.Abort();
             }
         }
@@ -85,18 +89,18 @@ namespace TarotAfricain
 
             List<Delegate> collbacks = new List<Delegate>
             {
-                //new DelegateParameter2(callPariJoueur),
-                //new DelegateParameter2(callJouerCarte),
-                //new DelegateParameter0(callPlayManche),
-                //new DelegateParameter0(callPlayManche2),
-                //new DelegateParameter0(callPlayManche3),
-                //new DelegateParameter0(callJoueurPioche),
-                //new DelegateParameter0(callJoueurPioche2),
-                //new DelegateParameter0(callPlayerPari),
-                //new DelegateParameter0(callPlayerPari2),
-                //new DelegateParameter1(callPlayTour),
-                //new DelegateParameter1(callPlayTour2),
-                //new DelegateParameter1(callPlayerJoue),
+                new DelegateParameter2(callPariJoueur),
+                new DelegateParameter2(callJouerCarte),
+                new DelegateParameter0(callPlayManche),
+                new DelegateParameter0(callPlayManche2),
+                new DelegateParameter0(callPlayManche3),
+                new DelegateParameter0(callJoueurPioche),
+                new DelegateParameter0(callJoueurPioche2),
+                new DelegateParameter0(callPlayerPari),
+                new DelegateParameter0(callPlayerPari2),
+                new DelegateParameter1(callPlayTour),
+                new DelegateParameter1(callPlayTour2),
+                new DelegateParameter1(callPlayerJoue),
             };
 
             foreach (var item in collbacks)
@@ -108,14 +112,20 @@ namespace TarotAfricain
 
         private bool callPlayerJoue(PlTerm carte)
         {
-            Debug.WriteLine("hello");
-            Debug.WriteLine(carte.ToString());
-            Thread.Sleep(10000);
+            string player = getNameCurrentPlayer();
+            string carteJouee = getIdCarte(carte);
+            List<string> main = getMainCurrentPlayer();
+
+            //events.carteJoueeChanged(player, carteJouee);
+            //events.mainChanged(player, main);
+
+            Thread.Sleep(timeIaThink);
             return true;
         }
 
-        private bool callPlayTour2(PlTerm term)
+        private bool callPlayTour2(PlTerm winner)
         {
+            string player = getNamePlayer(winner);
             return true;
         }
 
@@ -189,6 +199,49 @@ namespace TarotAfricain
             }
             result += list.Last() + "]";
             return result;
+        }
+
+        private string getNameCurrentPlayer()
+        {
+            PlTerm playerName = new PlTerm("NomPlayer");
+            PlQuery query = new PlQuery("currentPlayer(Player).");
+            PlTerm currentPlayer = query.Solutions.First()[0];
+            currentPlayer.Unify(PlTerm.PlCompound("player", playerName));
+            query.Dispose();
+            return playerName.ToString();
+        }
+
+        private string getIdCarte(PlTerm carte)
+        {
+            // Pour l'instant retourne le nom mais bientôt l'id
+            PlTerm id = new PlTerm("Id");
+            var carte2 = PlTerm.PlCompound("carte", id, PlTerm.PlVar(), PlTerm.PlVar());
+            carte.Unify(carte2);
+            return id.ToString();
+        }
+
+        private string getNamePlayer(PlTerm player)
+        {
+            PlTerm playerName = new PlTerm("NomPlayer");
+            player.Unify(PlTerm.PlCompound("player", playerName));
+            return playerName.ToString();
+        }
+
+        private List<string> getMainCurrentPlayer()
+        {
+            List<string> main = new List<string>();
+
+            PlQuery query = new PlQuery("currentPlayer(Player),jeuPlayer(Toto, Jeu).");
+            var jeu = query.SolutionVariables.First()["Jeu"];
+            if (jeu.IsList)
+            {
+                foreach (var item in jeu.ToList())
+                {
+                    main.Add(getIdCarte(item));
+                }
+            }
+            query.Dispose();
+            return main;
         }
     }
 }
