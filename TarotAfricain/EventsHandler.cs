@@ -54,10 +54,7 @@ namespace TarotAfricain
         public void OnCarteJoueeChangedHandler(object sender, NouvelleCarteJouee e)
         {
             Joueur j = jeu.joueurs.Find(v => v.nom.Equals(e.joueur));
-            // Retiree la carte jouee de la main du joueur
-            //j.carteJouee = e.carteJouee;
-            //j.main.Remove(j.main.Find(c => c.nom.Equals(e.carteJouee.nom)));
-            
+            j.carteJouee = e.carteJouee;            
         }
         public void OnMainChangedHandler(object sender, NouvelleMain e)
         {
