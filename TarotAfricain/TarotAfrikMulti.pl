@@ -122,8 +122,8 @@ playManche(0):- callPlayManche3, !.
 playManche(NbCarte):- callPlayManche,
    				initPointManchePlayers,
     			% distribuer retourne false quand il a fini de distribuer
-   				ignore(distribuer(NbCarte)),
-   				ignore(parier(NbCarte)),
+   				distribuer(NbCarte),
+   				parier(NbCarte),
    				playTour(0, NbCarte),
     			comparePariGain,
    				resetCarteJouee, resetCartes, resetPari, resetPointManchePlayer,
@@ -165,8 +165,9 @@ clearJeuPlayer([]):-!.
 clearJeuPlayer([H|T]):-H = jeuPlayer(X,Y), retract(jeuPlayer(X,Y)), clearJeuPlayer(T).
 
 distribuer(NbCarte):- piocherCartes(NbCarte),
-    				nextPlayer(_),
-    				distribuer(NbCarte).
+    				(   not(nextPlayer(_)) ->  
+                        ! ;
+    				distribuer(NbCarte)).
 
 
 piocherCartes(NbCarte):- callJoueurPioche,
@@ -200,8 +201,9 @@ parier(NbCarte):- callPlayerPari,
             ),
    			assert(pari(Player, NbPli)),
    			callPlayerPari2,
-    		nextPlayer(_),
-    		parier(NbCarte).
+    		(   not(nextPlayer(_)) ->  
+                        ! ;
+    		parier(NbCarte)).
 
 joueurPari(Player, NbPli):- once((   repeat,
             		callPariJoueur(Player, NbPli),
@@ -209,9 +211,9 @@ joueurPari(Player, NbPli):- once((   repeat,
             		)).
 
 
-playTour(TourMax, TourMax):-!.
+playTour(TourMax, TourMax):- !.
 playTour(TourEnCours, TourMax):- callPlayTour(TourEnCours),
-    						ignore(jouerCarte(TourEnCours)),
+    						jouerCarte(TourEnCours),
     						findall(carteJouee(X,Y,_),carteJouee(X,Y,TourEnCours),ListeCarteJouee),
     						getBetterPlayer(ListeCarteJouee, Winner, TourEnCours),
     						pointManchePlayer(Winner, NbPointPlayer),
@@ -237,8 +239,9 @@ jouerCarte(TourEnCours):- currentPlayer(Player),
                         ),
                         assert(carteJouee(Player, Carte, TourEnCours)),
     					callPlayerJoue(Carte),
-                        nextPlayer(_),
-                        jouerCarte(TourEnCours).
+                        (   not(nextPlayer(_)) ->  
+                        ! ;
+                        jouerCarte(TourEnCours)).
 
 joueurJoueCarte(Player, Carte):- once((   repeat,
                             callJouerCarte(Player, IdCarte),

@@ -20,7 +20,7 @@ namespace TarotAfricain
         List<int> isIa;
         int nbCarte;
         GenerateEvents events;
-        const int timeIaThink = 1500;
+        const int timeIaThink = 200;
         
         public void StartGame(GenerateEvents generateEvents, List<string> names, List<int> isIa, int nbCarte)
         {
@@ -34,7 +34,7 @@ namespace TarotAfricain
 
         public void StopGame()
         {
-            if(tarot.IsAlive)
+            if(tarot != null && tarot.IsAlive)
             {
                 PlEngine.PlHalt();
                 tarot.Abort();
@@ -101,6 +101,7 @@ namespace TarotAfricain
                 new DelegateParameter1(callPlayTour),
                 new DelegateParameter1(callPlayTour2),
                 new DelegateParameter1(callPlayerJoue),
+                new DelegateParameter0(calljojo)
             };
 
             foreach (var item in collbacks)
@@ -108,6 +109,11 @@ namespace TarotAfricain
                 PlEngine.RegisterForeign(item);
             }
 
+        }
+
+        private bool calljojo()
+        {
+            return true;
         }
 
         private bool callPlayerJoue(PlTerm carte)
@@ -148,14 +154,16 @@ namespace TarotAfricain
         {
             string player = getNameCurrentPlayer();
             List<string> main = getMainCurrentPlayer();
+
             Debug.WriteLine(player);
             foreach (var item in main)
             {
-                Debug.Write(item);
+                Debug.Write(item + ", ");
             }
             Debug.WriteLine("");
+
             events.mainChanged(player, main);
-            Thread.Sleep(500);
+            Thread.Sleep(100);
             return true;
         }
 
