@@ -172,16 +172,16 @@ namespace TarotAfricain
             if (OnMainChanged != null)
             {
                 List<Carte> main1 = new List<Carte>();
-                main1.Add(new Core.Carte("1 trefle"));
-                main1.Add(new Core.Carte("1 pique"));
-                main1.Add(new Core.Carte("1 carreau"));
-                main1.Add(new Core.Carte("1 coeur"));
+                main1.Add(new Core.Carte("1"));
+                main1.Add(new Core.Carte("2"));
+                main1.Add(new Core.Carte("3"));
+                main1.Add(new Core.Carte("4"));
 
                 List<Carte> main2 = new List<Carte>();
-                main2.Add(new Core.Carte("7 trefle"));
-                main2.Add(new Core.Carte("7 pique"));
-                main2.Add(new Core.Carte("7 carreau"));
-                main2.Add(new Core.Carte("7 coeur"));
+                main2.Add(new Core.Carte("5"));
+                main2.Add(new Core.Carte("6"));
+                main2.Add(new Core.Carte("7"));
+                main2.Add(new Core.Carte("8"));
 
                 OnMainChanged(this, new NouvelleMain("player1", main1));
                 OnMainChanged(this, new NouvelleMain("player2", main2));
@@ -193,8 +193,8 @@ namespace TarotAfricain
             }
             if (OnCarteJoueeChanged != null)
             {
-                Carte carte1 = new Core.Carte("1 coeur");
-                Carte carte2 = new Core.Carte("7 coeur");
+                Carte carte1 = new Core.Carte("1");
+                Carte carte2 = new Core.Carte("5");
                 OnCarteJoueeChanged(this, new NouvelleCarteJouee("player1", carte1));
                 OnCarteJoueeChanged(this, new NouvelleCarteJouee("player2", carte2));
             }
