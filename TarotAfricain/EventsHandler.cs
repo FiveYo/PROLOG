@@ -71,6 +71,10 @@ namespace TarotAfricain
         public void OnGagnantTourHandler(object sender, NouveauGagnantTour e)
         {
             // Fin du tour, on jette les cartes du pli et on affiche le gagnant dans une boite de dialogue
+            foreach (Joueur jr in jeu.joueurs)
+            {
+                jr.carteJouee = null;
+            }
             jeu.gameState = TarotAfricain.GameState.DialogueBox;
             jeu.dialogueBox.text = String.Format("{0} gagne le tour {1} !", e.joueur, e.tour.ToString());
         }
