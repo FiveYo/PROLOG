@@ -30,6 +30,7 @@ namespace TarotAfricain
         private KbHandler kb = new KbHandler();
         private EventsHandler eh;
         private GenerateEvents generateEvents;
+        private InterfacePl pl;
 
         GameObject tapis;
         GameObject tapisParis;
@@ -97,9 +98,7 @@ namespace TarotAfricain
 
             this.IsMouseVisible = true;
             base.Initialize();
-
-            InterfacePl pl = new InterfacePl();
-            pl.StartGame(new List<string> { "j1", "j2" }, new List<int> { 1, 1 }, 3);
+            pl = new InterfacePl();
         }
 
         /// <summary>
@@ -399,6 +398,21 @@ namespace TarotAfricain
                     eh.Subscribe(generateEvents);
                     generateEvents.Send();
                     generateEvents.mancheChanged(55);
+                    List<string> listNoms = new List<string>();
+                    List<int> listIa = new List<int>();
+                    foreach (Joueur j in joueurs)
+                    {
+                        listNoms.Add(j.nom);
+                        if (j.IsIA)
+                        {
+                            listIa.Add(1);
+                        }
+                        else
+                        {
+                            listIa.Add(0);
+                        }
+                    }
+                    pl.StartGame(generateEvents, listNoms, listIa, 3);
                     debugVariable = false;
                 }
                 // ------------------------------------------------------------------------------
