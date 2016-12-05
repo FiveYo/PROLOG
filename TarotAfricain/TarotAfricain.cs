@@ -21,12 +21,14 @@ namespace TarotAfricain
         SpriteBatch spriteBatch;
         public const int WINDOWS_WIDTH = 983;
         public const int WINDOWS_HEIGHT = 888;
+        public const int DIALOG_WIDTH = 900;
+        public const int DIALOG_HEIGHT = 327;
         public const int CARTE_WIDTH = 90;
         public const int CARTE_HEIGHT = 113;
         public const int JOUEUR_WIDTH = (WINDOWS_WIDTH - 40 ) / 2;
         public const int JOUEUR_HEIGHT = CARTE_HEIGHT + 50;
         public GameState gameState = GameState.StartMenu;
-        private MouseState oldMouseState;
+        public MouseState oldMouseState;
         private KbHandler kb = new KbHandler();
         private EventsHandler eh;
         private GenerateEvents generateEvents;
@@ -42,6 +44,7 @@ namespace TarotAfricain
         Textbox nbPlayersTextbox;
         Textbox numManche;
         Textbox numTour;
+        public ObjectWithText dialogueBox;
         public List<Joueur> joueurs;
         public int nbJoueurs;
         public int nbCartes;
@@ -56,7 +59,8 @@ namespace TarotAfricain
             StartMenu = 0,
             ChooseNbPlayers = 1,
             ChooseNames = 2,
-            PlayGame = 3
+            PlayGame = 3,
+            DialogueBox = 4
         }
 
         public TarotAfricain()
@@ -86,6 +90,7 @@ namespace TarotAfricain
             nbPlayerWindow = new Core.GameObject();
             nbPlayersTextbox = new Core.Textbox();
             namePlayersWindow = new Core.GameObject();
+            dialogueBox = new Core.ObjectWithText();
             numManche = new Core.Textbox();
             numTour = new Core.Textbox();
 
@@ -160,6 +165,12 @@ namespace TarotAfricain
             nbPlayersTextbox.font = Content.Load<SpriteFont>("DefaultFont");
             nbPlayersTextbox.Position = new Vector2(nbPlayerWindow.Position.X + 190, nbPlayerWindow.Position.Y + 210);
             //nbPlayersTextbox.text = "test";
+
+            // Boite de dialogue pour afficher des messages
+            dialogueBox.font = Content.Load<SpriteFont>("DefaultFont");
+            dialogueBox.Position = new Rectangle((WINDOWS_WIDTH - DIALOG_WIDTH) / 2, (WINDOWS_HEIGHT - DIALOG_HEIGHT) / 2, DIALOG_WIDTH, DIALOG_HEIGHT);
+            dialogueBox.Texture = Content.Load<Texture2D>("dialogueBox");
+            dialogueBox.PositionText = new Vector2(dialogueBox.Position.X + 60, dialogueBox.Position.Y + 45);
         }
 
         /// <summary>
@@ -169,7 +180,7 @@ namespace TarotAfricain
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
-            pl.StopGame();
+            
         }
 
         /// <summary>
@@ -206,8 +217,9 @@ namespace TarotAfricain
                     }
                 }
 
-            // Écran Choix nb joueurs
-            } else if (gameState == GameState.ChooseNbPlayers)
+                // Écran Choix nb joueurs
+            }
+            else if (gameState == GameState.ChooseNbPlayers)
             {
                 // Gestion de la saisie
                 if (kb.text.Length > 1)
@@ -231,9 +243,9 @@ namespace TarotAfricain
                             int margeFenetre = 40;
                             int margeEntete = 50;
                             int heightNameField = Math.Min((namePlayersWindow.Position.Height - (margeEntete + 2 * margeFenetre + nbJoueurs * 10)) / nbJoueurs, 50);
-                            for (int i=0; i<nbJoueurs; i++)
+                            for (int i = 0; i < nbJoueurs; i++)
                             {
-                                joueurs.Add(new Joueur("player" + (i+1)));
+                                joueurs.Add(new Joueur("player" + (i + 1)));
                                 joueurs[i].nameField.text = joueurs[i].nom;
                                 joueurs[i].nameField.font = Content.Load<SpriteFont>("DefaultFont");
                                 joueurs[i].iaField.font = Content.Load<SpriteFont>("DefaultFont");
@@ -255,11 +267,12 @@ namespace TarotAfricain
                                 if (nbJoueurs > 4)
                                 {
                                     joueurs[i].Position = new Rectangle(50, (JOUEUR_HEIGHT + 10) * i + 30, JOUEUR_WIDTH, JOUEUR_HEIGHT);
-                                } else
-                                {
-                                    joueurs[i].Position = new Rectangle(50, (JOUEUR_HEIGHT + 10) * (i+1) + 30, JOUEUR_WIDTH, JOUEUR_HEIGHT);
                                 }
-                                
+                                else
+                                {
+                                    joueurs[i].Position = new Rectangle(50, (JOUEUR_HEIGHT + 10) * (i + 1) + 30, JOUEUR_WIDTH, JOUEUR_HEIGHT);
+                                }
+
                                 joueurs[i].PositionText = new Vector2(joueurs[i].Position.X, joueurs[i].Position.Y + JOUEUR_HEIGHT / 3);
                                 joueurs[i].parisField.Position = new Vector2(tableauPoints.Position.X + 50, joueurs[i].PositionText.Y);
                                 joueurs[i].pointField.Position = new Vector2(tableauPoints.Position.X + 20 + (tableauPoints.Texture.Width / 2), joueurs[i].PositionText.Y);
@@ -269,8 +282,9 @@ namespace TarotAfricain
                     }
                 }
 
-            // Écran Choix noms joueurs
-            } else if (gameState == GameState.ChooseNames)
+                // Écran Choix noms joueurs
+            }
+            else if (gameState == GameState.ChooseNames)
             {
                 foreach (var j in joueurs)
                 {
@@ -307,7 +321,8 @@ namespace TarotAfricain
                             if (j.iaField.text == "")
                             {
                                 j.iaField.text = "x";
-                            } else
+                            }
+                            else
                             {
                                 j.iaField.text = "";
                             }
@@ -323,9 +338,9 @@ namespace TarotAfricain
                     {
                         j.nameField.text = kb.text.ToLower() + "|";
                     }
-                    
+
                 }
-                
+
                 // Si click sur le bouton valider
                 if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
                 {
@@ -355,7 +370,7 @@ namespace TarotAfricain
                         }
 
                         // On verifie que tous les noms soient bien distincts
-                        for (int i=0; i<noms.Count; i++)
+                        for (int i = 0; i < noms.Count; i++)
                         {
                             string name = noms[i];
                             noms.RemoveAt(i);
@@ -384,20 +399,21 @@ namespace TarotAfricain
                             }
                             gameState += 1;
                         }
-                        
+
                     }
                 }
 
-            // Écran de Jeu
-            } else if (gameState == GameState.PlayGame)
+                // Écran de Jeu
+            }
+            else if (gameState == GameState.PlayGame)
             {
                 // DEBUG : Test un envoi d'événements -------------------------------------------
                 if (debugVariable)
                 {
                     //GenerateEvents testEvents = new GenerateEvents();
                     eh.Subscribe(generateEvents);
-                    generateEvents.Send();
-                    generateEvents.mancheChanged(55);
+                    //generateEvents.Send();
+                    //generateEvents.mancheChanged(55);
                     List<string> listNoms = new List<string>();
                     List<int> listIa = new List<int>();
                     foreach (Joueur j in joueurs)
@@ -416,7 +432,7 @@ namespace TarotAfricain
                     debugVariable = false;
                 }
                 // ------------------------------------------------------------------------------
-                
+
                 if (!IsGameOver)
                 {
                     // Redefinition de la zone texte correspondant au numero de tour et de manche
@@ -435,18 +451,32 @@ namespace TarotAfricain
                                 c.Texture = Content.Load<Texture2D>("Cartes/" + c.nom);
                             }
                         }
-                        
+
                         // Redéfinition du dessin de la carte jouée
                         if (j.carteJouee != null)
                         {
                             j.carteJouee.Position = new Rectangle(tapisParis.Position.X + 5, j.Position.Y + 20, CARTE_WIDTH, CARTE_HEIGHT);
                             j.carteJouee.Texture = Content.Load<Texture2D>("Cartes/" + j.carteJouee.nom);
                         }
-                        
+
 
                         // Redefinition de la zone texte correspondant au paris et au point
                         j.parisField.text = j.paris.ToString();
                         j.pointField.text = String.Format("{0} - {1}", j.pointsManche.ToString(), j.pointsGame.ToString());
+                    }
+                }
+            }
+
+            // Écran boite de dialogue
+            else if (gameState == GameState.DialogueBox)
+            {
+                // Si click sur le bouton valider
+                if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                {
+                    if (validerBtn.Position.X < x && x < (validerBtn.Position.X + validerBtn.Position.Width) &&
+                        validerBtn.Position.Y < y && y < (validerBtn.Position.Y + validerBtn.Position.Height))
+                    {
+                        gameState = GameState.PlayGame;
                     }
                 }
             }
@@ -513,6 +543,11 @@ namespace TarotAfricain
                     }
                     
                 }
+            }
+            else if (gameState == GameState.DialogueBox)
+            {
+                dialogueBox.DrawObject(spriteBatch);
+                validerBtn.Draw(spriteBatch);
             }
 
             spriteBatch.End();

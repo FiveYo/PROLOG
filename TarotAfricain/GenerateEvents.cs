@@ -70,6 +70,17 @@ namespace TarotAfricain
         }
     }
 
+    public class NouveauGagnantTour : EventArgs
+    {
+        public string joueur;
+        public int tour;
+        public NouveauGagnantTour(string joueur, int tour)
+        {
+            this.joueur = joueur;
+            this.tour = tour;
+        }
+    }
+
     public class GenerateEvents
     {
         public delegate void ChangedMancheEventHandler(object sender, NouvelleManche e);
@@ -79,6 +90,7 @@ namespace TarotAfricain
         public delegate void ChangedCarteJoueeEventHandler(object sender, NouvelleCarteJouee e);
         public delegate void ChangedPointsEventHandler(object sender, NouveauxPoints e);
         public delegate void GameOverEventHandler(object sender, EventArgs e);
+        public delegate void ChangedGagnantTourEventHandler(object sender, NouveauGagnantTour e);
         public event ChangedMancheEventHandler OnMancheChanged;
         public event ChangedTourEventHandler OnTourChanged;
         public event ChangedMainEventHandler OnMainChanged;
@@ -87,6 +99,7 @@ namespace TarotAfricain
         public event ChangedPointsEventHandler OnPointsMancheChanged;
         public event ChangedPointsEventHandler OnPointsGameChanged;
         public event GameOverEventHandler OnGameOver;
+        public event ChangedGagnantTourEventHandler OnGagnantTour;
 
         public void mancheChanged(int manche)
         {
@@ -158,6 +171,14 @@ namespace TarotAfricain
             }
         }
 
+        public void gagnantTour(string joueur, int tour)
+        {
+            if (OnGagnantTour != null)
+            {
+                OnGagnantTour(this, new NouveauGagnantTour(joueur, tour));
+            }
+        }
+
         public void Send()
         {
             // Essaye d'envoyer tous les signaux disponibles
@@ -211,6 +232,10 @@ namespace TarotAfricain
             if (OnGameOver != null)
             {
                 //OnGameOver(this, EventArgs.Empty);
+            }
+            if (OnGagnantTour != null)
+            {
+                OnGagnantTour(this, new NouveauGagnantTour("player1", 42));
             }
         }
     }
