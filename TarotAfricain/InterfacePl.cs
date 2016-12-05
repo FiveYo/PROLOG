@@ -20,10 +20,13 @@ namespace TarotAfricain
         List<int> isIa;
         int nbCarte;
         GenerateEvents events;
-        const int timeIaThink = 500;
+        const int timeIaThink = 100;
+
+        List<Delegate> mesDelegate;
         
         public void StartGame(GenerateEvents generateEvents, List<string> names, List<int> isIa, int nbCarte)
         {
+            mesDelegate = new List<Delegate>();
             events = generateEvents;
             this.names = names;
             this.isIa = isIa;
@@ -60,13 +63,32 @@ namespace TarotAfricain
 
                 String[] param = { "-q", "-f", filename };
 
-                string query = "playGame(" + serialNames + ", " + serialIsIa + ", " + nbCarte.ToString() + ").";
+                string query = "playGame(" + serialNames + ", " + serialIsIa + ", " + nbCarte.ToString() + "), write('end').";
 
+
+                
+
+                
                 PlEngine.Initialize(param);
+                Debug.WriteLine(PlEngine.PlThreadSelf());
+
+                //Debug.WriteLine("Attachement : " + PlEngine.PlThreadAttachEngine());
+                PlEngine.SetStreamFunctionWrite(SbsSW.SwiPlCs.Streams.PlStreamType.Output, stdout);
 
                 InitializeCallBack();
                 PlQuery.PlCall(query);
+
+                PlEngine.PlCleanup();
+
+                Debug.WriteLine("end");
             }
+        }
+
+        private long stdout(IntPtr handle, string buffer, long bufferSize)
+        {
+            string s = buffer.Substring(0, (int)bufferSize);
+            Debug.WriteLine(s);
+            return bufferSize;
         }
 
         private void InitializeCallBack()
@@ -111,10 +133,17 @@ namespace TarotAfricain
             foreach (var item in collbacks)
             {
                 PlEngine.RegisterForeign(item);
+                // stock les delegates pour pas qu'ils soient bouffé par le garbage
+                mesDelegate.Add(item);
             }
 
         }
 
+        /// <summary>
+        /// Player joue la carte carte
+        /// </summary>
+        /// <param name="carte"></param>
+        /// <returns></returns>
         private bool callPlayerJoue(PlTerm carte)
         {
             string player = getNameCurrentPlayer();
@@ -128,19 +157,31 @@ namespace TarotAfricain
             return true;
         }
 
+        /// <summary>
+        /// Fin du tour le gagnant est winner
+        /// </summary>
+        /// <param name="winner"></param>
+        /// <returns></returns>
         private bool callPlayTour2(PlTerm winner)
         {
             string player = getNamePlayer(winner);
             int nbPoint = getPointsManchePlayer(winner);
             events.pointsMancheChanged(player, nbPoint);
+
+            //update les points game
             //Thread.Sleep(timeIaThink);
             return true;
         }
 
+        /// <summary>
+        /// Début du tour nbTour
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
         private bool callPlayTour(PlTerm term)
         {
-            events.tourChanged(int.Parse(term.ToString()));
-            Thread.Sleep(timeIaThink);
+            int nbTour = int.Parse(term.ToString());
+            events.tourChanged(nbTour);
             return true;
         }
 

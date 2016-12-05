@@ -196,7 +196,7 @@ parier(NbCarte):- callPlayerPari,
     		currentPlayer(Player),
     		playerIA(Player, IsIA),
     		% on regarde si c'est une IA ou pas, si ça l'est pas on vérifie que le nombre entrée est correct
-    		(   IsIA = 1 ->  pariIABourrin(Player, NbPli);
+    		(   IsIA = 1 -> iaPari(NbPli, NbCarte) ; % pariIABourrin(Player, NbPli);
             joueurPari(Player, NbPli)
             ),
    			assert(pari(Player, NbPli)),
@@ -204,6 +204,8 @@ parier(NbCarte):- callPlayerPari,
     		(   not(nextPlayer(_)) ->  
                         ! ;
     		parier(NbCarte)).
+
+iaPari(NbPli, NbCarte):-RandomNb is NbCarte + 1, random(0, RandomNb, NbPli).
 
 joueurPari(Player, NbPli):- once((   repeat,
             		callPariJoueur(Player, NbPli),
@@ -234,7 +236,7 @@ getBetterPlayer(ListeCarteJouee, Winner, TourEnCours):- createListFromListAtom(2
 jouerCarte(TourEnCours):- currentPlayer(Player),
     					playerIA(Player, IsIA),
                         % on regarde si c'est une IA ou pas, si ça l'est pas on vérifie que le nombre entrée est correct
-                        (   IsIA = 1 ->  iaChoisitBourrin(Player, Carte);
+                        (   IsIA = 1 ->  once(iaChoisit(Player, Carte)) ; % iaChoisitBourrin(Player, Carte);
                         	joueurJoueCarte(Player, Carte)
                         ),
                         assert(carteJouee(Player, Carte, TourEnCours)),
@@ -242,6 +244,11 @@ jouerCarte(TourEnCours):- currentPlayer(Player),
                         (   not(nextPlayer(_)) ->  
                         ! ;
                         jouerCarte(TourEnCours)).
+
+iaChoisit(Player, Carte):- jeuPlayer(Player, ListeCartes),
+    					ListeCartes = [Carte|Tail],
+    					retract(jeuPlayer(Player, ListeCartes)),
+    					assert(jeuPlayer(Player, Tail)).
 
 joueurJoueCarte(Player, Carte):- once((   repeat,
                             callJouerCarte(Player, IdCarte),

@@ -414,8 +414,8 @@ namespace TarotAfricain
                 {
                     //GenerateEvents testEvents = new GenerateEvents();
                     eh.Subscribe(generateEvents);
-                    generateEvents.Send();
-                    generateEvents.getCarteJouee("player1");
+                    //generateEvents.Send();
+                    //generateEvents.getCarteJouee("player1");
                     List<string> listNoms = new List<string>();
                     List<int> listIa = new List<int>();
                     foreach (Joueur j in joueurs)
@@ -430,7 +430,7 @@ namespace TarotAfricain
                             listIa.Add(0);
                         }
                     }
-                    //pl.StartGame(generateEvents, listNoms, listIa, 3);
+                    pl.StartGame(generateEvents, listNoms, listIa, 3);
                     debugVariable = false;
                 }
                 // ------------------------------------------------------------------------------
