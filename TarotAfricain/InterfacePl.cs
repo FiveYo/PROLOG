@@ -20,7 +20,7 @@ namespace TarotAfricain
         List<int> isIa;
         int nbCarte;
         GenerateEvents events;
-        const int timeIaThink = 200;
+        const int timeIaThink = 1000;
         
         public void StartGame(GenerateEvents generateEvents, List<string> names, List<int> isIa, int nbCarte)
         {
@@ -45,6 +45,7 @@ namespace TarotAfricain
         {
             if (!PlEngine.IsInitialized)
             {
+                PlEngine.PlCleanup();
                 //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
                 string filename = "TarotAfrikMulti.pl";
 
@@ -163,7 +164,7 @@ namespace TarotAfricain
             Debug.WriteLine("");
 
             events.mainChanged(player, main);
-            Thread.Sleep(100);
+            Thread.Sleep(timeIaThink);
             return true;
         }
 
