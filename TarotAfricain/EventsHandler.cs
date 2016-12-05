@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TarotAfricain.Core;
+using TarotAfricain;
 
 namespace TarotAfricain
 {
@@ -28,6 +30,7 @@ namespace TarotAfricain
             g.OnPointsGameChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointGameChangedHandler);
             g.OnPointsMancheChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointMancheChangedHandler);
             g.OnGagnantTour += new GenerateEvents.ChangedGagnantTourEventHandler(OnGagnantTourHandler);
+            g.OnGetCarteJouee += new GenerateEvents.GetCarteJoueeJoueurEventHandler(OnGetCarteJoueeHandler);
         }
         public void OnTourChangedHandler(object sender, NouveauTour e)
         {
@@ -75,8 +78,26 @@ namespace TarotAfricain
             {
                 jr.carteJouee = null;
             }
+            jeu.dialogueBox.text = String.Format("{0} gagne le tour {1} !", e.joueur, jeu.tour.ToString());
             jeu.gameState = TarotAfricain.GameState.DialogueBox;
-            jeu.dialogueBox.text = String.Format("{0} gagne le tour {1} !", e.joueur, e.tour.ToString());
+        }
+        public void OnGetCarteJoueeHandler(object sender, JoueurArg e)
+        {
+            jeu.dialogueBox.text = String.Format("{0} choisissez une carte a jouer:", e.nomJoueur);
+            Joueur j = jeu.joueurs.Find(v => v.nom.Equals(e.nomJoueur));
+            if (j.IsIA == true)
+            {
+                throw new LeJoueurQuiDoitPiocherEstUneIaException(String.Format("{0} est une IA", j.nom));
+            }
+            j.carteJouee = null;
+            e.joueur = j;
+            // On selectionne le joueur et on deselectionne tous les autres
+            foreach (Joueur jr in jeu.joueurs)
+            {
+                jr.selectionne = false;
+            }
+            j.selectionne = true;
+            jeu.gameState = TarotAfricain.GameState.ChooseCard;
         }
     }
 }

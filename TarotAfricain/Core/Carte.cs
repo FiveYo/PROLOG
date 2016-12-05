@@ -11,10 +11,12 @@ namespace TarotAfricain.Core
         // public string valeur;
         // public string couleur;
         public string nom;
+        public bool selectionne;
 
         public Carte(string nom)
         {
             this.nom = nom;
+            this.selectionne = false;
         }
     }
 }

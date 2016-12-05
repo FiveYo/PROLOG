@@ -73,11 +73,20 @@ namespace TarotAfricain
     public class NouveauGagnantTour : EventArgs
     {
         public string joueur;
-        public int tour;
-        public NouveauGagnantTour(string joueur, int tour)
+        public NouveauGagnantTour(string joueur)
         {
             this.joueur = joueur;
-            this.tour = tour;
+        }
+    }
+
+    public class JoueurArg : EventArgs
+    {
+        public string nomJoueur;
+        public Joueur joueur;
+        public JoueurArg(string joueur)
+        {
+            this.nomJoueur = joueur;
+            this.joueur = null;
         }
     }
 
@@ -91,6 +100,7 @@ namespace TarotAfricain
         public delegate void ChangedPointsEventHandler(object sender, NouveauxPoints e);
         public delegate void GameOverEventHandler(object sender, EventArgs e);
         public delegate void ChangedGagnantTourEventHandler(object sender, NouveauGagnantTour e);
+        public delegate void GetCarteJoueeJoueurEventHandler(object sender, JoueurArg e);
         public event ChangedMancheEventHandler OnMancheChanged;
         public event ChangedTourEventHandler OnTourChanged;
         public event ChangedMainEventHandler OnMainChanged;
@@ -100,6 +110,7 @@ namespace TarotAfricain
         public event ChangedPointsEventHandler OnPointsGameChanged;
         public event GameOverEventHandler OnGameOver;
         public event ChangedGagnantTourEventHandler OnGagnantTour;
+        public event GetCarteJoueeJoueurEventHandler OnGetCarteJouee;
 
         public void mancheChanged(int manche)
         {
@@ -171,12 +182,22 @@ namespace TarotAfricain
             }
         }
 
-        public void gagnantTour(string joueur, int tour)
+        public void gagnantTour(string joueur)
         {
             if (OnGagnantTour != null)
             {
-                OnGagnantTour(this, new NouveauGagnantTour(joueur, tour));
+                OnGagnantTour(this, new NouveauGagnantTour(joueur));
             }
+        }
+
+        public JoueurArg getCarteJouee(string joueur)
+        {
+            JoueurArg joueurArg = new JoueurArg(joueur);
+            if (OnGetCarteJouee != null)
+            {
+                OnGetCarteJouee(this, joueurArg);
+            }
+            return joueurArg;
         }
 
         public void Send()
@@ -235,7 +256,7 @@ namespace TarotAfricain
             }
             if (OnGagnantTour != null)
             {
-                OnGagnantTour(this, new NouveauGagnantTour("player1", 42));
+                //OnGagnantTour(this, new NouveauGagnantTour("player1", 42));
             }
         }
     }

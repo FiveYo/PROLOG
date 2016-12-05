@@ -43,6 +43,7 @@
     <Compile Include="Core\Joueur.cs" />
     <Compile Include="Core\ObjectWithText.cs" />
     <Compile Include="Core\Textbox.cs" />
+    <Compile Include="CustomExceptions.cs" />
     <Compile Include="EventsHandler.cs" />
     <Compile Include="GenerateEvents.cs" />
     <Compile Include="InterfacePl.cs" />

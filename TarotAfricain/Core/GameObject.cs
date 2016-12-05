@@ -25,6 +25,16 @@ namespace TarotAfricain.Core
             catch (System.ArgumentNullException) { }
         }
 
+        public void Draw(SpriteBatch spriteBatch, Color color)
+        {
+            try
+            {
+                spriteBatch.Draw(Texture, Position, color);
+            }
+            catch (System.NullReferenceException) { }
+            catch (System.ArgumentNullException) { }
+        }
+
         public void Dispose()
         {
             this.Texture.Dispose();

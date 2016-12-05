@@ -60,7 +60,9 @@ namespace TarotAfricain
             ChooseNbPlayers = 1,
             ChooseNames = 2,
             PlayGame = 3,
-            DialogueBox = 4
+            DialogueBox = 4,
+            ChooseCard = 5,
+            ChoosePari = 6
         }
 
         public TarotAfricain()
@@ -412,8 +414,8 @@ namespace TarotAfricain
                 {
                     //GenerateEvents testEvents = new GenerateEvents();
                     eh.Subscribe(generateEvents);
-                    // generateEvents.Send();
-                    // generateEvents.mancheChanged(55);
+                    generateEvents.Send();
+                    generateEvents.getCarteJouee("player1");
                     List<string> listNoms = new List<string>();
                     List<int> listIa = new List<int>();
                     foreach (Joueur j in joueurs)
@@ -428,7 +430,7 @@ namespace TarotAfricain
                             listIa.Add(0);
                         }
                     }
-                    pl.StartGame(generateEvents, listNoms, listIa, 3);
+                    //pl.StartGame(generateEvents, listNoms, listIa, 3);
                     debugVariable = false;
                 }
                 // ------------------------------------------------------------------------------
@@ -481,6 +483,61 @@ namespace TarotAfricain
                 }
             }
 
+            // Écran choix d'une carte à jouer
+            else if (gameState == GameState.ChooseCard)
+            {
+                // On trouve le joueur selectionne
+                Joueur j = null;
+                foreach (Joueur jr in joueurs)
+                {
+                    if (jr.selectionne)
+                    {
+                        j = jr;
+                    }
+                }
+                // On repositionne les cartes pour en choisir une
+                int i = 0;
+                foreach (Carte c in j.main)
+                {
+                    c.Position = new Rectangle(Convert.ToInt32(dialogueBox.PositionText.X) + i * (TarotAfricain.CARTE_WIDTH + 10),
+                                               Convert.ToInt32(dialogueBox.PositionText.Y + 50),
+                                               TarotAfricain.CARTE_WIDTH, TarotAfricain.CARTE_HEIGHT);
+                    i++;
+                }
+                if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                {
+                    // Si click sur le bouton valider
+                    if (validerBtn.Position.X < x && x < (validerBtn.Position.X + validerBtn.Position.Width) &&
+                        validerBtn.Position.Y < y && y < (validerBtn.Position.Y + validerBtn.Position.Height))
+                    {
+                        foreach (Carte c in j.main)
+                        {
+                            // Si on trouve une carte selectionnée on retourne à l'écran de jeu
+                            if (c.selectionne)
+                            {
+                                j.carteJouee = new Carte(c.nom);
+                                c.selectionne = false;
+                                gameState = GameState.PlayGame;
+                            }
+                        }
+                    }
+
+                    // Si click sur une carte on la selectionne
+                    foreach (Carte c in j.main)
+                    {
+                        if (c.Position.X < x && x < (c.Position.X + c.Position.Width) &&
+                            c.Position.Y < y && y < (c.Position.Y + c.Position.Height))
+                        {
+                            c.selectionne = true;
+                        }
+                        else
+                        {
+                            c.selectionne = false;
+                        }
+                    }
+                }
+            }
+
             oldMouseState = mouseState;
             base.Update(gameTime);
         }
@@ -529,7 +586,6 @@ namespace TarotAfricain
                     j.DrawString(spriteBatch);
                     j.parisField.DrawWhiteString(spriteBatch);
                     j.pointField.DrawWhiteString(spriteBatch);
-                    //TODO: afficher les mains, paris, points des joueurs
                     if (j.main != null)
                     {
                         foreach (Carte c in j.main)
@@ -549,7 +605,28 @@ namespace TarotAfricain
                 dialogueBox.DrawObject(spriteBatch);
                 validerBtn.Draw(spriteBatch);
             }
-
+            else if (gameState == GameState.ChooseCard)
+            {
+                dialogueBox.DrawObject(spriteBatch);
+                validerBtn.Draw(spriteBatch);
+                foreach (Joueur j in joueurs)
+                {
+                    if (j.selectionne)
+                    {
+                        foreach (Carte c in j.main)
+                        {
+                            if (c.selectionne)
+                            {
+                                c.Draw(spriteBatch, Color.Aqua);
+                            }
+                            else
+                            {
+                                c.Draw(spriteBatch);
+                            }
+                        }
+                    }
+                }
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
