@@ -12,7 +12,7 @@ namespace TarotAfricain
 {
     class InterfacePl
     {
-        public void StartGame(List<string> names, List<int> isIa, int nbCarte)
+        public void StartGame(GenerateEvents generateEvents, List<string> names, List<int> isIa, int nbCarte)
         {
             // Loading the prolog kbase
             if (!PlEngine.IsInitialized)
@@ -72,18 +72,18 @@ namespace TarotAfricain
 
             List<Delegate> collbacks = new List<Delegate>
             {
-                new DelegateParameter2(callPariJoueur),
-                new DelegateParameter2(callJouerCarte),
-                new DelegateParameter0(callPlayManche),
-                new DelegateParameter0(callPlayManche2),
-                new DelegateParameter0(callPlayManche3),
-                new DelegateParameter0(callJoueurPioche),
-                new DelegateParameter0(callJoueurPioche2),
-                new DelegateParameter0(callPlayerPari),
-                new DelegateParameter0(callPlayerPari2),
-                new DelegateParameter1(callPlayTour),
-                new DelegateParameter1(callPlayTour2),
-                new DelegateParameter1(callPlayerJoue),
+                //new DelegateParameter2(callPariJoueur),
+                //new DelegateParameter2(callJouerCarte),
+                //new DelegateParameter0(callPlayManche),
+                //new DelegateParameter0(callPlayManche2),
+                //new DelegateParameter0(callPlayManche3),
+                //new DelegateParameter0(callJoueurPioche),
+                //new DelegateParameter0(callJoueurPioche2),
+                //new DelegateParameter0(callPlayerPari),
+                //new DelegateParameter0(callPlayerPari2),
+                //new DelegateParameter1(callPlayTour),
+                //new DelegateParameter1(callPlayTour2),
+                //new DelegateParameter1(callPlayerJoue),
             };
 
             foreach (var item in collbacks)
