@@ -169,7 +169,7 @@ namespace TarotAfricain
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
-            
+            pl.StopGame();
         }
 
         /// <summary>

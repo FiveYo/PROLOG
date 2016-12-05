@@ -116,8 +116,8 @@ namespace TarotAfricain
             string carteJouee = getIdCarte(carte);
             List<string> main = getMainCurrentPlayer();
 
-            //events.carteJoueeChanged(player, carteJouee);
-            //events.mainChanged(player, main);
+            events.carteJoueeChanged(player, carteJouee);
+            events.mainChanged(player, main);
 
             Thread.Sleep(timeIaThink);
             return true;
@@ -146,6 +146,16 @@ namespace TarotAfricain
 
         private bool callJoueurPioche2()
         {
+            string player = getNameCurrentPlayer();
+            List<string> main = getMainCurrentPlayer();
+            Debug.WriteLine(player);
+            foreach (var item in main)
+            {
+                Debug.Write(item);
+            }
+            Debug.WriteLine("");
+            events.mainChanged(player, main);
+            Thread.Sleep(500);
             return true;
         }
 
@@ -231,7 +241,7 @@ namespace TarotAfricain
         {
             List<string> main = new List<string>();
 
-            PlQuery query = new PlQuery("currentPlayer(Player),jeuPlayer(Toto, Jeu).");
+            PlQuery query = new PlQuery("currentPlayer(Player),jeuPlayer(Player, Jeu).");
             var jeu = query.SolutionVariables.First()["Jeu"];
             if (jeu.IsList)
             {
