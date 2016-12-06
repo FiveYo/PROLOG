@@ -37,6 +37,7 @@ namespace TarotAfricain
 
         public void StopGame()
         {
+            Debug.WriteLine("On es ici");
             if(tarot != null && tarot.IsAlive)
             {
                 PlEngine.PlHalt();
@@ -52,7 +53,7 @@ namespace TarotAfricain
         {
             if (!PlEngine.IsInitialized)
             {
-                PlEngine.PlCleanup();
+                // Thread clean = new Thread();
                 //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
                 string filename = "TarotAfrikMulti.pl";
 
@@ -70,6 +71,7 @@ namespace TarotAfricain
 
                 
                 PlEngine.Initialize(param);
+                Debug.WriteLine(PlEngine.IsInitialized);
                 Debug.WriteLine(PlEngine.PlThreadSelf());
 
                 //Debug.WriteLine("Attachement : " + PlEngine.PlThreadAttachEngine());
@@ -78,10 +80,13 @@ namespace TarotAfricain
                 InitializeCallBack();
                 PlQuery.PlCall(query);
 
-                PlEngine.PlCleanup();
-
                 Debug.WriteLine("end");
             }
+        }
+
+        private void clean()
+        {
+            PlEngine.PlHalt();
         }
 
         private long stdout(IntPtr handle, string buffer, long bufferSize)
@@ -268,9 +273,9 @@ namespace TarotAfricain
             string result = "[";
             foreach (var item in list.Take(list.Count() - 1))
             {
-                result += item.ToString() + ", ";
+                result += "2, ";// item.ToString() + ", ";
             }
-            result += list.Last() + "]";
+            result += "2]";// list.Last() + "]";
             return result;
         }
 
