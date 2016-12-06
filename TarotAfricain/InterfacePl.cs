@@ -170,6 +170,7 @@ namespace TarotAfricain
 
         private bool callJoueurPioche()
         {
+
             return true;
         }
 
