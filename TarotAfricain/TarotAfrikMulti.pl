@@ -110,7 +110,7 @@ checkConstraints(Players, PlayersIA, NbCarte):- length(Players, NbPlayers), leng
                                                 ).
 
 checkListInteger([]):-!.
-checkListInteger([H|T]):-( (H=0 ; H=1) ->  checkListInteger(T); throw("IAList must contains only 0 and 1")).
+checkListInteger([H|T]):-( (H=0 ; H=1 ; H=2) ->  checkListInteger(T); throw("IAList must contains only 0 and 1")).
                                                 
 initPlayers([],[]):- !.
 initPlayers([H|T], [H2|T2]):- 
@@ -196,14 +196,17 @@ parier(NbCarte):- callPlayerPari,
     		currentPlayer(Player),
     		playerIA(Player, IsIA),
     		% on regarde si c'est une IA ou pas, si ça l'est pas on vérifie que le nombre entrée est correct
-    		(   IsIA = 1 ->  pariIABourrin(Player, NbPli);
-            joueurPari(Player, NbPli)
+    		(   IsIA = 1 -> iaPari(NbPli, NbCarte) ; 
+            (   IsIA = 2 ->   pariIABourrin(Player, NbPli);
+            joueurPari(Player, NbPli))
             ),
    			assert(pari(Player, NbPli)),
    			callPlayerPari2,
     		(   not(nextPlayer(_)) ->  
                         ! ;
     		parier(NbCarte)).
+
+iaPari(NbPli, NbCarte):-RandomNb is NbCarte + 1, random(0, RandomNb, NbPli).
 
 joueurPari(Player, NbPli):- once((   repeat,
             		callPariJoueur(Player, NbPli),
@@ -234,14 +237,20 @@ getBetterPlayer(ListeCarteJouee, Winner, TourEnCours):- createListFromListAtom(2
 jouerCarte(TourEnCours):- currentPlayer(Player),
     					playerIA(Player, IsIA),
                         % on regarde si c'est une IA ou pas, si ça l'est pas on vérifie que le nombre entrée est correct
-                        (   IsIA = 1 ->  iaChoisitBourrin(Player, Carte);
-                        	joueurJoueCarte(Player, Carte)
+                        (   IsIA = 1 ->  once(iaChoisit(Player, Carte)) ; 
+                        (   IsIA = 2 ->  iaChoisitBourrin(Player, Carte);
+                        	joueurJoueCarte(Player, Carte))
                         ),
                         assert(carteJouee(Player, Carte, TourEnCours)),
     					callPlayerJoue(Carte),
                         (   not(nextPlayer(_)) ->  
                         ! ;
                         jouerCarte(TourEnCours)).
+
+iaChoisit(Player, Carte):- jeuPlayer(Player, ListeCartes),
+    					ListeCartes = [Carte|Tail],
+    					retract(jeuPlayer(Player, ListeCartes)),
+    					assert(jeuPlayer(Player, Tail)).
 
 joueurJoueCarte(Player, Carte):- once((   repeat,
                             callJouerCarte(Player, IdCarte),
@@ -444,6 +453,3 @@ addListZero2([H|T], Acc, Result):- (   H is 0 ->  (
 
 
 
-
-
-    

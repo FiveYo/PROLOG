@@ -20,10 +20,13 @@ namespace TarotAfricain
         List<int> isIa;
         int nbCarte;
         GenerateEvents events;
-        const int timeIaThink = 1000;
+        const int timeIaThink = 100;
+
+        List<Delegate> mesDelegate;
         
         public void StartGame(GenerateEvents generateEvents, List<string> names, List<int> isIa, int nbCarte)
         {
+            mesDelegate = new List<Delegate>();
             events = generateEvents;
             this.names = names;
             this.isIa = isIa;
@@ -34,10 +37,15 @@ namespace TarotAfricain
 
         public void StopGame()
         {
+            Debug.WriteLine("On es ici");
             if(tarot != null && tarot.IsAlive)
             {
                 PlEngine.PlHalt();
                 tarot.Abort();
+            }
+            else if(tarot.ThreadState == System.Threading.ThreadState.Stopped)
+            {
+                PlEngine.PlCleanup();
             }
         }
 
@@ -45,7 +53,7 @@ namespace TarotAfricain
         {
             if (!PlEngine.IsInitialized)
             {
-                PlEngine.PlCleanup();
+                // Thread clean = new Thread();
                 //string filename = @"C:\Users\Mathieu\Documents\Visual Studio 2015\Projects\TarotAfricain\TarotAfricain\Prolog\prolog.pro";
                 string filename = "TarotAfrikMulti.pl";
 
@@ -56,13 +64,36 @@ namespace TarotAfricain
 
                 String[] param = { "-q", "-f", filename };
 
-                string query = "playGame(" + serialNames + ", " + serialIsIa + ", " + nbCarte.ToString() + ").";
+                string query = "playGame(" + serialNames + ", " + serialIsIa + ", " + nbCarte.ToString() + "), write('end').";
 
+
+                
+
+                
                 PlEngine.Initialize(param);
+                Debug.WriteLine(PlEngine.IsInitialized);
+                Debug.WriteLine(PlEngine.PlThreadSelf());
+
+                //Debug.WriteLine("Attachement : " + PlEngine.PlThreadAttachEngine());
+                PlEngine.SetStreamFunctionWrite(SbsSW.SwiPlCs.Streams.PlStreamType.Output, stdout);
 
                 InitializeCallBack();
                 PlQuery.PlCall(query);
+
+                Debug.WriteLine("end");
             }
+        }
+
+        private void clean()
+        {
+            PlEngine.PlHalt();
+        }
+
+        private long stdout(IntPtr handle, string buffer, long bufferSize)
+        {
+            string s = buffer.Substring(0, (int)bufferSize);
+            Debug.WriteLine(s);
+            return bufferSize;
         }
 
         private void InitializeCallBack()
@@ -102,21 +133,22 @@ namespace TarotAfricain
                 new DelegateParameter1(callPlayTour),
                 new DelegateParameter1(callPlayTour2),
                 new DelegateParameter1(callPlayerJoue),
-                new DelegateParameter0(calljojo)
             };
 
             foreach (var item in collbacks)
             {
                 PlEngine.RegisterForeign(item);
+                // stock les delegates pour pas qu'ils soient bouffé par le garbage
+                mesDelegate.Add(item);
             }
 
         }
 
-        private bool calljojo()
-        {
-            return true;
-        }
-
+        /// <summary>
+        /// Player joue la carte carte
+        /// </summary>
+        /// <param name="carte"></param>
+        /// <returns></returns>
         private bool callPlayerJoue(PlTerm carte)
         {
             string player = getNameCurrentPlayer();
@@ -130,24 +162,46 @@ namespace TarotAfricain
             return true;
         }
 
+        /// <summary>
+        /// Fin du tour le gagnant est winner
+        /// </summary>
+        /// <param name="winner"></param>
+        /// <returns></returns>
         private bool callPlayTour2(PlTerm winner)
         {
             string player = getNamePlayer(winner);
+            int nbPoint = getPointsManchePlayer(winner);
+            events.pointsMancheChanged(player, nbPoint);
+
+            //update les points game
+            //Thread.Sleep(timeIaThink);
             return true;
         }
 
+        /// <summary>
+        /// Début du tour nbTour
+        /// </summary>
+        /// <param name="term"></param>
+        /// <returns></returns>
         private bool callPlayTour(PlTerm term)
         {
+            int nbTour = int.Parse(term.ToString());
+            events.tourChanged(nbTour);
             return true;
         }
 
         private bool callPlayerPari2()
         {
+            string player = getNameCurrentPlayer();
+            int nbPari = getNbPariCurrentPlayer();
+            events.parisChanged(player, nbPari);
+            Thread.Sleep(timeIaThink);
             return true;
         }
 
         private bool callPlayerPari()
         {
+            Thread.Sleep(timeIaThink);
             return true;
         }
 
@@ -170,22 +224,24 @@ namespace TarotAfricain
 
         private bool callJoueurPioche()
         {
-
             return true;
         }
 
         private bool callPlayManche3()
         {
+            events.gameOver();
             return true;
         }
 
         private bool callPlayManche2()
         {
+            //Thread.Sleep(timeIaThink);
             return true;
         }
 
         private bool callPlayManche()
         {
+            Thread.Sleep(timeIaThink);
             return true;
         }
 
@@ -196,6 +252,7 @@ namespace TarotAfricain
 
         private bool callPariJoueur(PlTerm term1, PlTerm term2)
         {
+
             return true;
         }
 
@@ -215,53 +272,103 @@ namespace TarotAfricain
             string result = "[";
             foreach (var item in list.Take(list.Count() - 1))
             {
-                result += item.ToString() + ", ";
+                result += "2, ";// item.ToString() + ", ";
             }
-            result += list.Last() + "]";
+            result += "2]";// list.Last() + "]";
             return result;
         }
 
         private string getNameCurrentPlayer()
         {
-            PlTerm playerName = new PlTerm("NomPlayer");
-            PlQuery query = new PlQuery("currentPlayer(Player).");
-            PlTerm currentPlayer = query.Solutions.First()[0];
-            currentPlayer.Unify(PlTerm.PlCompound("player", playerName));
-            query.Dispose();
-            return playerName.ToString();
+            string name;
+            using (PlFrame fr = new PlFrame())
+            {
+                PlTerm playerName = new PlTerm("NomPlayer");
+                using (PlQuery query = new PlQuery("currentPlayer(Player)."))
+                {
+                    PlTerm currentPlayer = query.Solutions.First()[0];
+                    currentPlayer.Unify(PlTerm.PlCompound("player", playerName));
+                    name = playerName.ToString();
+                }
+            }
+            return name;
         }
 
         private string getIdCarte(PlTerm carte)
         {
-            // Pour l'instant retourne le nom mais bientôt l'id
-            PlTerm id = new PlTerm("Id");
-            var carte2 = PlTerm.PlCompound("carte", id, PlTerm.PlVar(), PlTerm.PlVar());
-            carte.Unify(carte2);
-            return id.ToString();
+            string idCarte;
+            using (PlFrame fr = new PlFrame())
+            {
+                PlTerm id = new PlTerm("Id");
+                var carte2 = PlTerm.PlCompound("carte", id, PlTerm.PlVar(), PlTerm.PlVar());
+                carte.Unify(carte2);
+                idCarte = id.ToString();
+            }
+            return idCarte;
         }
 
         private string getNamePlayer(PlTerm player)
         {
-            PlTerm playerName = new PlTerm("NomPlayer");
-            player.Unify(PlTerm.PlCompound("player", playerName));
-            return playerName.ToString();
+            string name;
+            using (PlFrame fr = new PlFrame())
+            {
+                PlTerm playerName = new PlTerm("NomPlayer");
+                player.Unify(PlTerm.PlCompound("player", playerName));
+                name = playerName.ToString();
+            }
+            return name;
         }
 
         private List<string> getMainCurrentPlayer()
         {
             List<string> main = new List<string>();
 
-            PlQuery query = new PlQuery("currentPlayer(Player),jeuPlayer(Player, Jeu).");
-            var jeu = query.SolutionVariables.First()["Jeu"];
-            if (jeu.IsList)
+            using (PlFrame fr = new PlFrame())
             {
-                foreach (var item in jeu.ToList())
+                using (PlQuery query = new PlQuery("currentPlayer(Player),jeuPlayer(Player, Jeu)."))
                 {
-                    main.Add(getIdCarte(item));
+                    var jeu = query.SolutionVariables.First()["Jeu"];
+                    if (jeu.IsList)
+                    {
+                        foreach (var item in jeu.ToList())
+                        {
+                            main.Add(getIdCarte(item));
+                        }
+                    }
                 }
             }
-            query.Dispose();
+
             return main;
+        }
+
+        private int getNbPariCurrentPlayer()
+        {
+            int result;
+            using (PlFrame fr = new PlFrame())
+            {
+                using (PlQuery query = new PlQuery("currentPlayer(Player),pari(Player, Pari)."))
+                {
+                    string nbPari = query.SolutionVariables.First()["Pari"].ToString();
+                    result = int.Parse(nbPari);
+                }
+            }
+            return result;
+        }
+
+        private int getPointsManchePlayer(PlTerm player)
+        {
+            int result;
+            using (PlFrame fr = new PlFrame())
+            {
+                PlTerm nbPoint = new PlTerm("NbPoint");
+                PlTermV terms = new PlTermV(player, nbPoint);
+                using (PlQuery query = new PlQuery("pointManchePlayer",terms))
+                {
+                    string nbPari = query.Solutions.First()[1].ToString();
+                    result = int.Parse(nbPari);
+                }
+            }
+            return result;
         }
     }
 }
