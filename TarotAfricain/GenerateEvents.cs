@@ -101,6 +101,8 @@ namespace TarotAfricain
         public delegate void GameOverEventHandler(object sender, EventArgs e);
         public delegate void ChangedGagnantTourEventHandler(object sender, NouveauGagnantTour e);
         public delegate void GetCarteJoueeJoueurEventHandler(object sender, JoueurArg e);
+        public delegate void GetPariEventHandler(object sender, JoueurArg e);
+        public delegate void MancheEndEventHandler(object sender, EventArgs e);
         public event ChangedMancheEventHandler OnMancheChanged;
         public event ChangedTourEventHandler OnTourChanged;
         public event ChangedMainEventHandler OnMainChanged;
@@ -111,12 +113,14 @@ namespace TarotAfricain
         public event GameOverEventHandler OnGameOver;
         public event ChangedGagnantTourEventHandler OnGagnantTour;
         public event GetCarteJoueeJoueurEventHandler OnGetCarteJouee;
+        public event MancheEndEventHandler OnMancheEnd;
+        public event GetPariEventHandler OnGetPari;
 
-        public void mancheChanged(int manche)
+        public void mancheChanged()
         {
             if (OnMancheChanged != null)
             {
-                OnMancheChanged(this, new NouvelleManche(manche));
+                OnMancheChanged(this, new NouvelleManche(0));
             }
         }
 
@@ -190,12 +194,30 @@ namespace TarotAfricain
             }
         }
 
+        public void mancheEnd()
+        {
+            if (OnMancheEnd != null)
+            {
+                OnMancheEnd(this, EventArgs.Empty);
+            }
+        }
+
         public JoueurArg getCarteJouee(string joueur)
         {
             JoueurArg joueurArg = new JoueurArg(joueur);
             if (OnGetCarteJouee != null)
             {
                 OnGetCarteJouee(this, joueurArg);
+            }
+            return joueurArg;
+        }
+
+        public JoueurArg getPari(string joueur)
+        {
+            JoueurArg joueurArg = new JoueurArg(joueur);
+            if (OnGetPari != null)
+            {
+                OnGetPari(this, joueurArg);
             }
             return joueurArg;
         }

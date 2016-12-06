@@ -42,6 +42,7 @@ namespace TarotAfricain
         GameObject nbPlayerWindow;
         GameObject namePlayersWindow;
         Textbox nbPlayersTextbox;
+        ObjectWithText pariTextbox;
         Textbox numManche;
         Textbox numTour;
         public ObjectWithText dialogueBox;
@@ -61,8 +62,8 @@ namespace TarotAfricain
             ChooseNames = 2,
             PlayGame = 3,
             DialogueBox = 4,
-            ChooseCard = 5,
-            ChoosePari = 6
+            ChoosePari = 5,
+            ChooseCard = 6
         }
 
         public TarotAfricain()
@@ -95,10 +96,11 @@ namespace TarotAfricain
             dialogueBox = new Core.ObjectWithText();
             numManche = new Core.Textbox();
             numTour = new Core.Textbox();
+            pariTextbox = new Core.ObjectWithText();
 
             joueurs = new List<Joueur>();
             manche = 0;
-            tour = 0;
+            tour = 1;
             nbJoueurs = 0;
             nbCartes = 5;
             IsGameOver = false;
@@ -173,6 +175,14 @@ namespace TarotAfricain
             dialogueBox.Position = new Rectangle((WINDOWS_WIDTH - DIALOG_WIDTH) / 2, (WINDOWS_HEIGHT - DIALOG_HEIGHT) / 2, DIALOG_WIDTH, DIALOG_HEIGHT);
             dialogueBox.Texture = Content.Load<Texture2D>("dialogueBox");
             dialogueBox.PositionText = new Vector2(dialogueBox.Position.X + 60, dialogueBox.Position.Y + 45);
+
+            // Textbox pour saisir le pari de la manche
+            pariTextbox.font = Content.Load<SpriteFont>("DefaultFont");
+            pariTextbox.Position = new Rectangle((dialogueBox.Position.X + dialogueBox.Position.Width / 4) - 10,
+                                                  (dialogueBox.Position.Y + dialogueBox.Position.Height / 2),
+                                                  100, 50);
+            pariTextbox.PositionText = new Vector2(pariTextbox.Position.X + 10, pariTextbox.Position.Y + 10);
+            pariTextbox.Texture = Content.Load<Texture2D>("textbox_small");
         }
 
         /// <summary>
@@ -279,6 +289,7 @@ namespace TarotAfricain
                                 joueurs[i].parisField.Position = new Vector2(tableauPoints.Position.X + 50, joueurs[i].PositionText.Y);
                                 joueurs[i].pointField.Position = new Vector2(tableauPoints.Position.X + 20 + (tableauPoints.Texture.Width / 2), joueurs[i].PositionText.Y);
                             }
+                            kb.text = "";
                             gameState += 1;
                         }
                     }
@@ -399,6 +410,7 @@ namespace TarotAfricain
                                     j.text += "\n(IA)";
                                 }
                             }
+                            kb.text = "";
                             gameState += 1;
                         }
 
@@ -415,7 +427,7 @@ namespace TarotAfricain
                     //GenerateEvents testEvents = new GenerateEvents();
                     eh.Subscribe(generateEvents);
                     //generateEvents.Send();
-                    //generateEvents.getCarteJouee("player1");
+                    //generateEvents.getPari("player1");
                     List<string> listNoms = new List<string>();
                     List<int> listIa = new List<int>();
                     foreach (Joueur j in joueurs)
@@ -538,6 +550,44 @@ namespace TarotAfricain
                 }
             }
 
+            // Écran choix d'un paris
+            else if (gameState == GameState.ChoosePari)
+            {
+                // Gestion de la saisie
+                if (kb.text.Length > 1)
+                {
+                    kb.text = kb.text[0].ToString();
+                }
+
+                // On trouve le joueur selectionne
+                Joueur j = null;
+                foreach (Joueur jr in joueurs)
+                {
+                    if (jr.selectionne)
+                    {
+                        j = jr;
+                    }
+                }
+                
+                pariTextbox.text = kb.text + "|";
+                // Si click sur le bouton valider
+                if (mouseState.LeftButton == ButtonState.Pressed && oldMouseState.LeftButton == ButtonState.Released)
+                {
+                    if (validerBtn.Position.X < x && x < (validerBtn.Position.X + validerBtn.Position.Width) &&
+                        validerBtn.Position.Y < y && y < (validerBtn.Position.Y + validerBtn.Position.Height))
+                    {
+                        // Si la chaine saisie est bien un entier (2, 3, 4 ou 5) on passe à l'étape suivante.
+                        int testCast;
+                        if (Int32.TryParse(kb.text, out testCast) &&
+                            (testCast == 0 || testCast == 1 || testCast == 2 || testCast == 3 || testCast == 4 || testCast == 5))
+                        {
+                            j.paris = testCast;
+                            kb.text = "";
+                            gameState = GameState.PlayGame;
+                        }
+                    }
+                }
+            }
             oldMouseState = mouseState;
             base.Update(gameTime);
         }
@@ -626,6 +676,12 @@ namespace TarotAfricain
                         }
                     }
                 }
+            }
+            else if (gameState == GameState.ChoosePari)
+            {
+                dialogueBox.DrawObject(spriteBatch);
+                pariTextbox.DrawObject(spriteBatch);
+                validerBtn.Draw(spriteBatch);
             }
             spriteBatch.End();
             base.Draw(gameTime);

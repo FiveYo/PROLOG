@@ -31,6 +31,8 @@ namespace TarotAfricain
             g.OnPointsMancheChanged += new GenerateEvents.ChangedPointsEventHandler(OnPointMancheChangedHandler);
             g.OnGagnantTour += new GenerateEvents.ChangedGagnantTourEventHandler(OnGagnantTourHandler);
             g.OnGetCarteJouee += new GenerateEvents.GetCarteJoueeJoueurEventHandler(OnGetCarteJoueeHandler);
+            g.OnGetPari += new GenerateEvents.GetPariEventHandler(OnGetPariHandler);
+            g.OnMancheEnd += new GenerateEvents.MancheEndEventHandler(OnMancheEndHandler);
         }
         public void OnTourChangedHandler(object sender, NouveauTour e)
         {
@@ -39,7 +41,11 @@ namespace TarotAfricain
 
         public void OnMancheChangedHandler(object sender, NouvelleManche e)
         {
-            jeu.manche = e.manche;
+            jeu.manche += 1;
+            foreach (Joueur j in jeu.joueurs)
+            {
+                j.paris = 0;
+            }
         }
 
         public void OnPointGameChangedHandler(object sender, NouveauxPoints e)
@@ -79,7 +85,15 @@ namespace TarotAfricain
                 jr.carteJouee = null;
             }
             jeu.dialogueBox.text = String.Format("{0} gagne le tour {1} !", e.joueur, jeu.tour.ToString());
-            jeu.gameState = TarotAfricain.GameState.DialogueBox;
+            //jeu.gameState = TarotAfricain.GameState.DialogueBox;
+        }
+        public void OnMancheEndHandler(object sender, EventArgs e)
+        {
+            foreach (Joueur jr in jeu.joueurs)
+            {
+                jr.pointsManche = 0;
+                jr.paris = 0;
+            }
         }
         public void OnGetCarteJoueeHandler(object sender, JoueurArg e)
         {
@@ -98,6 +112,25 @@ namespace TarotAfricain
             }
             j.selectionne = true;
             jeu.gameState = TarotAfricain.GameState.ChooseCard;
+        }
+
+        public void OnGetPariHandler(object sender, JoueurArg e)
+        {
+            jeu.dialogueBox.text = String.Format("{0} pariez un nombre de pli:", e.nomJoueur);
+            Joueur j = jeu.joueurs.Find(v => v.nom.Equals(e.nomJoueur));
+            if (j.IsIA == true)
+            {
+                throw new LeJoueurQuiDoitPiocherEstUneIaException(String.Format("{0} est une IA", j.nom));
+            }
+            j.paris = -1;
+            e.joueur = j;
+            // On selectionne le joueur et on deselectionne tous les autres
+            foreach (Joueur jr in jeu.joueurs)
+            {
+                jr.selectionne = false;
+            }
+            j.selectionne = true;
+            jeu.gameState = TarotAfricain.GameState.ChoosePari;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace TarotAfricain
         List<int> isIa;
         int nbCarte;
         GenerateEvents events;
-        const int timeIaThink = 100;
+        const int timeIaThink = 1000;
 
         List<Delegate> mesDelegate;
         
@@ -116,7 +116,8 @@ namespace TarotAfricain
 
             foreach (var item in rulesToRemove)
             {
-                PlQuery.PlCall("retractall(" + item + ").");
+                Debug.WriteLine(
+                PlQuery.PlCall("retractall(" + item + ")."));
             }
 
             List<Delegate> collbacks = new List<Delegate>
@@ -172,9 +173,10 @@ namespace TarotAfricain
             string player = getNamePlayer(winner);
             int nbPoint = getPointsManchePlayer(winner);
             events.pointsMancheChanged(player, nbPoint);
+            events.gagnantTour(winner.ToString());
 
             //update les points game
-            //Thread.Sleep(timeIaThink);
+            Thread.Sleep(timeIaThink/10);
             return true;
         }
 
@@ -186,7 +188,7 @@ namespace TarotAfricain
         private bool callPlayTour(PlTerm term)
         {
             int nbTour = int.Parse(term.ToString());
-            events.tourChanged(nbTour);
+            events.tourChanged(nbTour+1);
             return true;
         }
 
@@ -195,7 +197,7 @@ namespace TarotAfricain
             string player = getNameCurrentPlayer();
             int nbPari = getNbPariCurrentPlayer();
             events.parisChanged(player, nbPari);
-            Thread.Sleep(timeIaThink);
+            Thread.Sleep(timeIaThink/10);
             return true;
         }
 
@@ -218,7 +220,7 @@ namespace TarotAfricain
             Debug.WriteLine("");
 
             events.mainChanged(player, main);
-            Thread.Sleep(timeIaThink);
+            //Thread.Sleep(timeIaThink);
             return true;
         }
 
@@ -229,31 +231,53 @@ namespace TarotAfricain
 
         private bool callPlayManche3()
         {
+            callPlayManche2();
             events.gameOver();
             return true;
         }
 
         private bool callPlayManche2()
         {
-            //Thread.Sleep(timeIaThink);
+            Thread.Sleep(timeIaThink/10);
+            List<Tuple<string, int>> points = getPointsGame();
+            foreach (var player in points)
+            {
+                events.pointsGameChanged(player.Item1, player.Item2);
+                events.pointsMancheChanged(player.Item1, 0);
+            }
             return true;
         }
 
         private bool callPlayManche()
         {
             Thread.Sleep(timeIaThink);
+            events.mancheChanged();
             return true;
         }
 
-        private bool callJouerCarte(PlTerm term1, PlTerm term2)
+        private bool callJouerCarte(PlTerm joueur, PlTerm carte)
         {
+            Thread.Sleep(2*timeIaThink);
+            JoueurArg joueurArg = events.getCarteJouee(getNamePlayer(joueur));
+            while (joueurArg == null || joueurArg.joueur.carteJouee == null)
+            {
+                // on attend
+            }
+
+            carte.Unify(new PlTerm(joueurArg.joueur.carteJouee.nom));
             return true;
         }
 
-        private bool callPariJoueur(PlTerm term1, PlTerm term2)
+        private bool callPariJoueur(PlTerm joueur, PlTerm nbPli)
         {
-
-            return true;
+            Thread.Sleep(timeIaThink * 2);
+            JoueurArg joueurArg = events.getPari(getNamePlayer(joueur));
+            while (joueurArg == null || joueurArg.joueur.paris == -1)
+            {
+                // on attend
+            }
+            nbPli.Unify(new PlTerm(joueurArg.joueur.paris));
+           return true;
         }
 
         private string SerializeList(IEnumerable<string> list)
@@ -272,9 +296,9 @@ namespace TarotAfricain
             string result = "[";
             foreach (var item in list.Take(list.Count() - 1))
             {
-                result += "2, ";// item.ToString() + ", ";
+                result += item.ToString() + ", ";
             }
-            result += "2]";// list.Last() + "]";
+            result +=  list.Last() + "]";
             return result;
         }
 
@@ -366,6 +390,29 @@ namespace TarotAfricain
                 {
                     string nbPari = query.Solutions.First()[1].ToString();
                     result = int.Parse(nbPari);
+                }
+            }
+            return result;
+        }
+
+        private List<Tuple<string, int>> getPointsGame()
+        {
+            List<Tuple<string, int>> result = new List<Tuple<string, int>>();
+            using (PlFrame fr = new PlFrame())
+            {
+                PlTerm player = new PlTerm("Player");
+                PlTerm points = new PlTerm("Points");
+                PlTermV terms = new PlTermV(player, points);
+                using (PlQuery query = new PlQuery("pointGame", terms))
+                {
+                    foreach (var item in query.Solutions)
+                    {
+                        player = item[0];
+                        string nomPlayer = getNamePlayer(player);
+                        int nbPointsGame = int.Parse(item[1].ToString());
+                        result.Add(new Tuple<string, int>(nomPlayer, nbPointsGame));
+                        
+                    }
                 }
             }
             return result;
